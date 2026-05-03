@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>D-200 적응형 쪽지시험 v4 ・ 클라우드 연동판</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1a1a1a; --paper:#f5f1e8; --paper-2:#ebe5d4; --rule:#1a1a1a;
+    --accent:#c0392b; --accent-2:#2c5f5d; --muted:#6b6660;
+    --correct:#2c5f5d; --wrong:#c0392b; --warn:#d4a017; --gold:#b8860b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans KR',sans-serif;line-height:1.6}
+  body{
+    background-image:radial-gradient(circle at 20% 30%, rgba(0,0,0,0.02) 1px, transparent 1px),radial-gradient(circle at 80% 70%, rgba(0,0,0,0.02) 1px, transparent 1px);
+    background-size:4px 4px,6px 6px;min-height:100vh;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 28px 80px}
+
+  header{
+    border-top:6px double var(--rule);border-bottom:1px solid var(--rule);
+    padding:18px 0 14px;margin-bottom:14px;
+    display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;
+  }
+  .masthead{font-family:'Nanum Myeongjo',serif;font-weight:800;font-size:38px;letter-spacing:-1.5px;line-height:1.05}
+  .masthead span{color:var(--accent)}
+  .masthead small{display:block;font-size:11px;font-weight:400;letter-spacing:3px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace}
+  .meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);text-align:right}
+  .meta .dday{font-family:'Nanum Myeongjo',serif;font-size:32px;font-weight:800;color:var(--ink);letter-spacing:-1px}
+  .meta .dday em{font-style:normal;color:var(--accent)}
+
+  /* PHASE BANNER */
+  .phase-banner{
+    background:linear-gradient(90deg, var(--ink) 0%, var(--accent-2) 100%);
+    color:var(--paper);padding:14px 20px;margin-bottom:24px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+  }
+  .phase-name{font-family:'Nanum Myeongjo',serif;font-size:18px;font-weight:700;letter-spacing:-0.5px}
+  .phase-name em{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;font-style:normal;opacity:0.7;margin-right:10px}
+  .phase-desc{font-size:12px;opacity:0.85;line-height:1.5}
+  .phase-progress{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',monospace;font-size:11px}
+  .phase-track{width:180px;height:4px;background:rgba(255,255,255,0.2);position:relative}
+  .phase-fill{height:100%;background:var(--paper);transition:width 0.5s}
+
+  .mode-tabs{display:flex;border:1px solid var(--rule);margin-bottom:24px}
+  .mode-tab{
+    flex:1;background:transparent;border:none;border-right:1px solid var(--rule);
+    padding:14px 18px;cursor:pointer;font-family:'Nanum Myeongjo',serif;font-size:15px;font-weight:700;
+    color:var(--ink);letter-spacing:1px;
+  }
+  .mode-tab:last-child{border-right:none}
+  .mode-tab.active{background:var(--ink);color:var(--paper)}
+  .mode-tab small{display:block;font-size:9px;font-family:'JetBrains Mono',monospace;letter-spacing:2px;font-weight:400;color:var(--muted);margin-top:2px}
+  .mode-tab.active small{color:rgba(255,255,255,0.6)}
+
+  .userbar{
+    background:var(--ink);color:var(--paper);
+    padding:14px 18px;display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:20px;flex-wrap:wrap;gap:12px;
+  }
+  .userbar-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .userbar input{
+    background:transparent;border:none;border-bottom:1px solid var(--paper-2);
+    color:var(--paper);font-family:inherit;font-size:14px;padding:4px 6px;outline:none;width:140px;
+  }
+  .userbar input::placeholder{color:rgba(255,255,255,0.4)}
+  .userbar button{
+    background:var(--paper);color:var(--ink);border:none;
+    padding:6px 14px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    letter-spacing:1px;cursor:pointer;
+  }
+  .userbar button:hover{background:var(--accent);color:#fff}
+  .user-status{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.7);letter-spacing:1px}
+  .user-status strong{color:var(--paper);font-family:'Nanum Myeongjo',serif;font-size:14px;letter-spacing:0;font-weight:700}
+  .streak-badge{
+    background:var(--gold);color:#fff;padding:4px 10px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    letter-spacing:1px;
+  }
+  .streak-badge::before{content:'🔥';margin-right:4px}
+
+  /* GOAL PANEL */
+  .goal-panel{
+    background:var(--paper-2);border:1px solid var(--rule);
+    padding:14px 18px;margin-bottom:20px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+  }
+  .goal-info{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .goal-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted)}
+  .goal-target{font-family:'Nanum Myeongjo',serif;font-size:20px;font-weight:800;letter-spacing:-0.5px}
+  .goal-target em{font-style:normal;color:var(--accent);font-size:14px;margin-left:4px}
+  .goal-rank{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+  .goal-rank strong{color:var(--accent);font-size:14px;font-family:'Nanum Myeongjo',serif}
+  .goal-edit{
+    background:transparent;border:1px solid var(--ink);color:var(--ink);
+    padding:6px 14px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+    letter-spacing:1px;cursor:pointer;
+  }
+  .goal-edit:hover{background:var(--ink);color:var(--paper)}
+  .goal-form{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .goal-form select{
+    padding:8px 12px;font-family:inherit;font-size:13px;
+    border:1px solid var(--ink);background:var(--paper);
+  }
+
+  .dashboard{display:none;margin-bottom:32px}
+  .dashboard.show{display:block}
+  .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;border-left:1px solid var(--rule);border-top:1px solid var(--rule);margin-bottom:20px}
+  .dash-cell{
+    border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    padding:18px 16px;background:var(--paper-2);
+  }
+  .dash-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:6px}
+  .dash-value{font-family:'Nanum Myeongjo',serif;font-size:32px;font-weight:800;line-height:1;letter-spacing:-1px}
+  .dash-value em{font-size:14px;color:var(--muted);font-style:normal;font-weight:400;margin-left:4px}
+  .dash-sub{font-size:11px;color:var(--muted);margin-top:6px;font-family:'JetBrains Mono',monospace}
+
+  .chart-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+  @media (max-width:780px){.chart-row{grid-template-columns:1fr}}
+  .trend-box{border:1px solid var(--rule);padding:18px;background:var(--paper-2)}
+  .trend-title{font-family:'Nanum Myeongjo',serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;justify-content:space-between;align-items:baseline}
+  .trend-title small{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);font-weight:400;letter-spacing:1px}
+  .trend-chart{display:flex;align-items:flex-end;gap:6px;height:120px;border-bottom:1px solid var(--rule);padding-bottom:4px;margin-bottom:6px}
+  .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .bar{width:100%;background:var(--ink);min-height:2px;position:relative;transition:height 0.3s}
+  .bar.high{background:var(--correct)}
+  .bar.mid{background:var(--warn)}
+  .bar.low{background:var(--wrong)}
+  .bar-val{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);position:absolute;top:-14px;left:50%;transform:translateX(-50%)}
+  .bar-date{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-align:center}
+
+  .heatmap{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;padding-right:4px}
+  .heat-subject{margin-bottom:8px}
+  .heat-subj-name{font-family:'Nanum Myeongjo',serif;font-weight:700;font-size:13px;margin-bottom:4px;color:var(--ink)}
+  .heat-units{display:grid;grid-template-columns:repeat(auto-fill,minmax(85px,1fr));gap:4px}
+  .heat-cell{padding:8px 6px;border:1px solid rgba(0,0,0,0.08);font-family:'IBM Plex Sans KR';text-align:center;transition:transform 0.15s}
+  .heat-cell:hover{transform:scale(1.05);z-index:1;position:relative;border-color:var(--ink)}
+  .heat-name{font-size:10px;line-height:1.2;font-weight:500}
+  .heat-pct{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;margin-top:2px}
+  .heat-count{font-size:9px;color:rgba(0,0,0,0.5);margin-top:1px;font-family:'JetBrains Mono',monospace}
+
+  .ai-tag{display:inline-flex;align-items:center;gap:5px;background:var(--accent-2);color:#fff;padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;margin-left:8px}
+  .ai-tag::before{content:'◆';font-size:9px}
+
+  .section-title{
+    font-family:'Nanum Myeongjo',serif;font-size:13px;font-weight:700;letter-spacing:3px;
+    text-transform:uppercase;border-bottom:2px solid var(--ink);
+    padding-bottom:6px;margin-bottom:16px;
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  .section-title small{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;font-weight:400}
+
+  .selector{margin-bottom:36px}
+  .grid-subjects{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;border-left:1px solid var(--rule);border-top:1px solid var(--rule)}
+  .subj-card{background:transparent;border:none;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:24px 20px 22px;text-align:left;cursor:pointer;font-family:inherit;color:var(--ink);position:relative;transition:background 0.2s}
+  .subj-card:hover{background:var(--paper-2)}
+  .subj-card.active{background:var(--ink);color:var(--paper)}
+  .subj-card.active .subj-num,.subj-card.active .subj-desc,.subj-card.active .subj-rec{color:var(--paper-2)}
+  .subj-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;display:block;margin-bottom:8px}
+  .subj-name{font-family:'Nanum Myeongjo',serif;font-size:24px;font-weight:700;line-height:1.1;margin-bottom:8px}
+  .subj-desc{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+  .subj-rec{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--accent-2)}
+  .subj-rec.active-rec{color:var(--accent)}
+
+  .levels{display:flex;gap:0;margin-bottom:14px;border:1px solid var(--rule)}
+  .level-btn{flex:1;background:transparent;border:none;border-right:1px solid var(--rule);padding:18px 20px;cursor:pointer;font-family:inherit;color:var(--ink);text-align:left;transition:background 0.2s;position:relative}
+  .level-btn:last-child{border-right:none}
+  .level-btn:hover{background:var(--paper-2)}
+  .level-btn.active{background:var(--accent);color:#fff}
+  .level-btn.active .lv-desc{color:rgba(255,255,255,0.8)}
+  .level-btn.recommended::after{content:'추천';position:absolute;top:8px;right:8px;background:var(--accent-2);color:#fff;font-size:9px;padding:2px 6px;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+  .level-btn.active.recommended::after{background:#fff;color:var(--accent)}
+  .lv-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;display:block;margin-bottom:4px;opacity:0.6}
+  .lv-name{font-family:'Nanum Myeongjo',serif;font-size:20px;font-weight:700;display:block;margin-bottom:4px}
+  .lv-desc{font-size:11px;color:var(--muted)}
+
+  .recommendation-note{background:var(--paper-2);border-left:3px solid var(--accent-2);padding:10px 14px;margin-bottom:20px;font-size:12.5px;font-family:'IBM Plex Sans KR';line-height:1.6}
+  .recommendation-note strong{font-family:'Nanum Myeongjo',serif;color:var(--accent-2);letter-spacing:1px;font-size:11px}
+
+  .start-btn{width:100%;background:var(--ink);color:var(--paper);border:none;padding:22px;font-family:'Nanum Myeongjo',serif;font-size:22px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.2s;border:2px solid var(--ink)}
+  .start-btn:hover:not(:disabled){background:var(--accent);border-color:var(--accent)}
+  .start-btn:disabled{opacity:0.3;cursor:not-allowed}
+
+  .test-stage{display:none}
+  .test-stage.active{display:block}
+  .test-header{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--ink);padding-bottom:12px;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+  .test-title{font-family:'Nanum Myeongjo',serif;font-size:28px;font-weight:800;letter-spacing:-0.5px}
+  .test-title small{font-size:13px;color:var(--muted);font-weight:400;letter-spacing:1px;display:block;margin-top:2px}
+  .test-info{font-family:'JetBrains Mono',monospace;font-size:11px;text-align:right}
+
+  .question{border-bottom:1px dashed rgba(0,0,0,0.2);padding:24px 0}
+  .question:last-of-type{border-bottom:none}
+  .q-num{display:inline-block;font-family:'JetBrains Mono',monospace;background:var(--ink);color:var(--paper);padding:3px 9px;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px}
+  .q-unit-tag{display:inline-block;background:var(--paper-2);color:var(--ink);padding:3px 9px;font-size:10px;letter-spacing:1px;font-family:'IBM Plex Sans KR';font-weight:600;margin-left:6px;border:1px solid var(--ink)}
+  .q-text{font-family:'Nanum Myeongjo',serif;font-size:17px;line-height:1.7;margin-bottom:14px;white-space:pre-wrap}
+  .q-passage{background:var(--paper-2);border-left:3px solid var(--accent-2);padding:14px 18px;margin:10px 0 14px;font-size:14.5px;line-height:1.75;font-family:'Nanum Myeongjo',serif}
+  .options{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .option-label{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;cursor:pointer;border:1px solid transparent;transition:all 0.15s;font-size:15px;line-height:1.5}
+  .option-label:hover{background:var(--paper-2)}
+  .option-label input{margin-top:5px;cursor:pointer;accent-color:var(--ink)}
+  .option-num{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--muted);font-size:13px;margin-top:1px}
+  .short-input{width:100%;max-width:300px;padding:10px 14px;font-size:15px;font-family:inherit;background:transparent;border:none;border-bottom:2px solid var(--ink);outline:none}
+  .short-input:focus{border-bottom-color:var(--accent)}
+
+  .question.correct .q-num{background:var(--correct)}
+  .question.wrong .q-num{background:var(--wrong)}
+  .option-label.correct{background:rgba(44,95,93,0.12);border-color:var(--correct)}
+  .option-label.wrong{background:rgba(192,57,43,0.1);border-color:var(--wrong)}
+  .explanation{margin-top:14px;background:#fff8e8;border-left:3px solid var(--warn);padding:12px 16px;font-size:13.5px;line-height:1.7;display:none}
+  .explanation.show{display:block}
+  .explanation strong{font-family:'Nanum Myeongjo',serif;color:var(--accent);letter-spacing:1px;font-size:11px;display:block;margin-bottom:4px}
+
+  .submit-row{margin-top:36px;display:flex;gap:12px;flex-wrap:wrap}
+  .submit-btn{flex:1;min-width:200px;background:var(--accent);color:#fff;border:none;padding:18px;font-family:'Nanum Myeongjo',serif;font-size:18px;font-weight:700;letter-spacing:2px;cursor:pointer}
+  .submit-btn:hover{background:#a02e22}
+  .restart-btn{background:transparent;color:var(--ink);border:2px solid var(--ink);padding:18px 28px;font-family:'Nanum Myeongjo',serif;font-size:16px;font-weight:700;letter-spacing:1px;cursor:pointer}
+  .restart-btn:hover{background:var(--ink);color:var(--paper)}
+
+  .scorecard{border:3px double var(--ink);padding:28px 24px;margin-bottom:24px;display:none;text-align:center;background:var(--paper-2)}
+  .scorecard.show{display:block}
+  .score-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--muted);margin-bottom:8px}
+  .score-num{font-family:'Nanum Myeongjo',serif;font-size:64px;font-weight:800;line-height:1;letter-spacing:-2px}
+  .score-num em{font-size:24px;color:var(--muted);font-style:normal;font-weight:400}
+  .score-msg{font-family:'Nanum Myeongjo',serif;font-size:15px;margin-top:10px;font-style:italic}
+  .level-change{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;padding:6px 12px;display:inline-block}
+  .level-change.up{background:var(--correct);color:#fff}
+  .level-change.down{background:var(--warn);color:#fff}
+  .level-change.same{background:var(--muted);color:#fff}
+  .unit-summary{margin-top:14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+  .rank-message{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);font-weight:700;letter-spacing:1px}
+
+  .loading{display:none;text-align:center;padding:60px 20px}
+  .loading.show{display:block}
+  .loading-text{font-family:'Nanum Myeongjo',serif;font-size:18px;font-style:italic;color:var(--muted);margin-bottom:16px}
+  .loading-bar{width:200px;height:2px;background:var(--paper-2);margin:0 auto;overflow:hidden;position:relative}
+  .loading-bar::after{content:'';position:absolute;left:-30%;top:0;height:100%;width:30%;background:var(--accent);animation:slide 1.4s infinite}
+  @keyframes slide{0%{left:-30%}100%{left:100%}}
+
+  .teacher-stage{display:none}
+  .teacher-stage.show{display:block}
+  .student-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:24px;background:var(--paper-2);border:1px solid var(--rule)}
+  .student-table th{background:var(--ink);color:var(--paper);padding:12px 10px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.5px;font-weight:700}
+  .student-table td{padding:12px 10px;border-bottom:1px solid rgba(0,0,0,0.1);vertical-align:middle}
+  .student-table tr:hover td{background:rgba(0,0,0,0.04);cursor:pointer}
+  .student-table .name{font-family:'Nanum Myeongjo',serif;font-weight:700;font-size:15px}
+  .pct-pill{display:inline-block;padding:3px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#fff}
+  .pct-pill.high{background:var(--correct)}
+  .pct-pill.mid{background:var(--warn)}
+  .pct-pill.low{background:var(--wrong)}
+  .pct-pill.none{background:var(--muted)}
+  .weak-tag{font-size:11px;color:var(--accent);font-family:'IBM Plex Sans KR';font-weight:600}
+  .absent-tag{background:var(--wrong);color:#fff;padding:2px 6px;font-size:10px;font-family:'JetBrains Mono',monospace;font-weight:700;letter-spacing:1px}
+  .streak-tag{color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px}
+
+  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;border-left:1px solid var(--rule);border-top:1px solid var(--rule);margin-bottom:24px}
+  .stat-cell{border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px 16px;background:var(--paper-2)}
+  .empty-state{text-align:center;padding:60px 20px;color:var(--muted);font-family:'Nanum Myeongjo',serif;font-style:italic;font-size:14px}
+
+  .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--paper);max-width:780px;width:100%;border:3px double var(--ink);padding:28px}
+  .modal-close{float:right;background:transparent;border:none;font-size:24px;cursor:pointer;color:var(--ink);line-height:1}
+  .modal h3{font-family:'Nanum Myeongjo',serif;font-size:22px;margin-bottom:14px;letter-spacing:-0.5px}
+  .modal-actions{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap}
+  .modal-actions button{padding:10px 18px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;border:none}
+  .btn-primary{background:var(--ink);color:var(--paper)}
+  .btn-secondary{background:transparent;color:var(--ink);border:1px solid var(--ink) !important}
+
+  /* REPORT (인쇄 가능) */
+  .report-body{background:#fff;color:#000;padding:30px;font-family:'IBM Plex Sans KR'}
+  .report-body h1{font-family:'Nanum Myeongjo',serif;font-size:28px;border-bottom:3px solid #000;padding-bottom:8px;margin-bottom:18px;letter-spacing:-0.5px}
+  .report-body h2{font-family:'Nanum Myeongjo',serif;font-size:16px;margin-top:20px;margin-bottom:10px;border-left:4px solid var(--accent);padding-left:10px}
+  .report-body table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px}
+  .report-body th,.report-body td{border:1px solid #ccc;padding:6px 8px;text-align:left}
+  .report-body th{background:#f0f0f0;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px}
+  .report-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:#666;margin-bottom:14px}
+  @media print{
+    body *{visibility:hidden}
+    #print-zone, #print-zone *{visibility:visible}
+    #print-zone{position:absolute;left:0;top:0;width:100%}
+    .no-print{display:none !important}
+  }
+
+  footer{margin-top:60px;border-top:1px solid var(--rule);padding-top:18px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+  @media (max-width:600px){
+    .masthead{font-size:30px}
+    .meta .dday{font-size:24px}
+    .test-title{font-size:22px}
+    .grid-subjects{grid-template-columns:repeat(2,1fr)}
+    .levels{flex-direction:column}
+    .level-btn{border-right:none;border-bottom:1px solid var(--rule)}
+    .level-btn:last-child{border-bottom:none}
+    .student-table{font-size:11px}
+    .student-table th,.student-table td{padding:8px 6px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="masthead">
+      고3 <span>적응형 쪽지시험</span>
+      <small>v4 ・ GOOGLE SHEETS CONNECTED ・ ALL DEVICE SYNC</small>
+    </div>
+    <div class="meta">
+      <div>2026 / 11 / 19 ・ 수능 D-Day</div>
+      <div class="dday">D-<em id="dday">200</em></div>
+      <div id="today-date"></div>
+    </div>
+  </header>
+
+  <!-- PHASE BANNER -->
+  <div class="phase-banner" id="phase-banner">
+    <div>
+      <div class="phase-name"><em id="phase-tag">PHASE 1</em><span id="phase-name">기초 다지기</span></div>
+      <div class="phase-desc" id="phase-desc">개념·어휘 누적 · 새 단원 광범위 출제 · 중급 위주 점검</div>
+    </div>
+    <div class="phase-progress">
+      <span id="phase-progress-text">D-200 → D-160</span>
+      <div class="phase-track"><div class="phase-fill" id="phase-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="student">학생 응시 모드<small>STUDENT</small></button>
+    <button class="mode-tab" data-mode="teacher">선생님 대시보드<small>TEACHER</small></button>
+  </div>
+
+  <!-- ============ 학생 모드 ============ -->
+  <div id="mode-student">
+    <div class="userbar">
+      <div class="userbar-left">
+        <span class="user-status" id="user-status">미로그인 ・ 이름을 입력하세요</span>
+        <input type="text" id="username-input" placeholder="이름 입력" maxlength="20" autocomplete="off"/>
+        <button id="login-btn">시작</button>
+        <span id="streak-display" style="display:none"></span>
+      </div>
+      <div>
+        <button id="logout-btn" style="display:none">다른 학생</button>
+      </div>
+    </div>
+
+    <!-- GOAL PANEL -->
+    <div class="goal-panel" id="goal-panel" style="display:none">
+      <div class="goal-info">
+        <div>
+          <div class="goal-label">목표 등급</div>
+          <div class="goal-target" id="goal-display">미설정</div>
+        </div>
+        <div>
+          <div class="goal-label">현재 위치</div>
+          <div class="goal-rank" id="rank-display">-</div>
+        </div>
+      </div>
+      <div>
+        <button class="goal-edit" id="goal-edit-btn">목표 설정</button>
+      </div>
+    </div>
+
+    <div class="dashboard" id="dashboard">
+      <div class="section-title">학습 분석 ・ 개인 대시보드 <small>LEARNING ANALYTICS</small></div>
+
+      <div class="dash-grid">
+        <div class="dash-cell">
+          <div class="dash-label">총 응시</div>
+          <div class="dash-value"><span id="total-tests">0</span><em>회</em></div>
+          <div class="dash-sub" id="recent-test-date">-</div>
+        </div>
+        <div class="dash-cell">
+          <div class="dash-label">평균 정답률</div>
+          <div class="dash-value"><span id="avg-score">0</span><em>%</em></div>
+          <div class="dash-sub" id="avg-trend">-</div>
+        </div>
+        <div class="dash-cell">
+          <div class="dash-label">최근 5회</div>
+          <div class="dash-value"><span id="recent-avg">0</span><em>%</em></div>
+          <div class="dash-sub" id="trend-direction">-</div>
+        </div>
+        <div class="dash-cell">
+          <div class="dash-label">연속 응시</div>
+          <div class="dash-value"><span id="streak-val">0</span><em>일</em></div>
+          <div class="dash-sub" id="streak-best">-</div>
+        </div>
+      </div>
+
+      <div class="chart-row">
+        <div class="trend-box">
+          <div class="trend-title">정답률 추이 <small>최근 10회</small></div>
+          <div class="trend-chart" id="trend-chart"></div>
+        </div>
+        <div class="trend-box">
+          <div class="trend-title">단원별 약점 분석 <small>UNIT HEATMAP</small></div>
+          <div class="heatmap" id="unit-heatmap"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="stage-select" class="selector">
+      <div class="section-title">제 1 단계 ・ 과목 선택 <small>SELECT SUBJECT</small></div>
+      <div class="grid-subjects" id="subject-grid"></div>
+
+      <div style="height:28px"></div>
+
+      <div class="section-title">제 2 단계 ・ 난이도 선택 <small>AI 추천 적용</small></div>
+      <div id="recommendation-note" class="recommendation-note" style="display:none">
+        <strong>AI 추천</strong><br/>
+        <span id="rec-text"></span>
+      </div>
+      <div class="levels">
+        <button class="level-btn" data-level="중">
+          <span class="lv-tag">LV. 中</span>
+          <span class="lv-name">중급 ・ 기본 다지기</span>
+          <span class="lv-desc">3등급 목표</span>
+        </button>
+        <button class="level-btn" data-level="상">
+          <span class="lv-tag">LV. 上</span>
+          <span class="lv-name">상급 ・ 실전 응용</span>
+          <span class="lv-desc">1·2등급 목표</span>
+        </button>
+      </div>
+
+      <button class="start-btn" id="start-btn" disabled>시 험 ・ 시 작</button>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="loading-text" id="loading-text">AI가 새 문제를 출제하는 중…</div>
+      <div class="loading-bar"></div>
+    </div>
+
+    <div id="stage-test" class="test-stage">
+      <div class="scorecard" id="scorecard">
+        <div class="score-label">SCORE</div>
+        <div class="score-num"><span id="score-val">0</span><em>/<span id="score-total">5</span></em></div>
+        <div class="score-msg" id="score-msg"></div>
+        <div id="rank-msg-result"></div>
+        <div id="level-change-msg"></div>
+        <div class="unit-summary" id="unit-summary"></div>
+      </div>
+
+      <div class="test-header">
+        <div class="test-title" id="test-title">시험 제목<small id="test-subtitle">부제</small></div>
+        <div class="test-info">
+          <div id="test-meta-date"></div>
+          <div id="test-meta-time"></div>
+          <div id="test-meta-user"></div>
+        </div>
+      </div>
+
+      <div id="questions-container"></div>
+
+      <div class="submit-row">
+        <button class="submit-btn" id="submit-btn">채 점 하 기</button>
+        <button class="restart-btn" id="restart-btn">처음으로</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 선생님 모드 ============ -->
+  <div id="mode-teacher" class="teacher-stage">
+    <div class="section-title">전체 학생 현황 <small>ALL STUDENTS</small></div>
+
+    <div class="stat-row" id="teacher-stats"></div>
+
+    <div id="student-list-wrap">
+      <table class="student-table" id="student-table">
+        <thead>
+          <tr>
+            <th>학생</th>
+            <th>응시</th>
+            <th>전체</th>
+            <th>최근5회</th>
+            <th>스트릭</th>
+            <th>목표</th>
+            <th>약점</th>
+            <th>마지막</th>
+            <th>리포트</th>
+          </tr>
+        </thead>
+        <tbody id="student-tbody"></tbody>
+      </table>
+      <div id="no-students" class="empty-state" style="display:none">아직 등록된 학생이 없습니다.</div>
+    </div>
+
+    <div style="height:32px"></div>
+
+    <div class="section-title">과목별 ・ 단원별 통계 <small>SUBJECT & UNIT STATS</small></div>
+    <div id="teacher-subject-stats"></div>
+  </div>
+
+  <!-- 학생 상세 모달 -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal-content">
+      <button class="modal-close" id="modal-close">×</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 인쇄 영역 -->
+  <div id="print-zone" style="display:none"></div>
+
+  <footer>
+    <div>독서실용 적응형 자가응시 ・ AI 단원 추적 ・ 페이즈별 모드 ・ 출석 ・ 목표 ・ 랭킹</div>
+    <div id="footer-time"></div>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   상수
+   ============================================================ */
+const SUNEUNG_DATE = new Date(2026, 10, 19);
+
+// 페이즈 정의
+const PHASES = [
+  {tag:'PHASE 1', name:'기초 다지기', minDday:101, desc:'개념·어휘 누적 · 광범위 출제 · 중급 위주 점검', recommendBoost:0, focusOnWeak:false},
+  {tag:'PHASE 2', name:'6월 모평 직후 ・ 영역 강화', minDday:71, desc:'6월 모평 결과 반영 · 약점 단원 비중 강화 · 상급 도전 시작', recommendBoost:0, focusOnWeak:true},
+  {tag:'PHASE 3', name:'9월 모평 직후 ・ 실전 모드', minDday:31, desc:'실전형 위주 · 상급 비중 확대 · 약점 단원 집중 강화', recommendBoost:1, focusOnWeak:true},
+  {tag:'PHASE 4', name:'마무리 ・ 누적 오답 모드', minDday:0, desc:'새 문제 출제 최소화 · 누적 오답·약점 단원만 집중 · 컨디션 우선', recommendBoost:0, focusOnWeak:true, finalMode:true},
+];
+
+const UNITS = {
+  국어: ['화법과작문','언어(문법)','독서(비문학)','문학(현대시)','문학(현대소설)','문학(고전시가)','문학(고전소설)','어휘'],
+  수학: ['수학Ⅰ-지수로그','수학Ⅰ-삼각함수','수학Ⅰ-수열','수학Ⅱ-함수극한','수학Ⅱ-미분','수학Ⅱ-적분','확률과통계','미적분','기하'],
+  한국사: ['선사~삼국','남북국','고려','조선전기','조선후기','개항기','일제강점기','현대'],
+  생활과윤리: ['윤리학기초','동양윤리','서양윤리','생명윤리','사회윤리','문화윤리','평화윤리','직업윤리']
+};
+
+const SUBJECTS = Object.keys(UNITS);
+const subjectInfo = {
+  국어: {n:'01', desc:'어휘・문법・문학・독서'},
+  수학: {n:'02', desc:'수I・수II・확통・미적・기하'},
+  한국사: {n:'03', desc:'전근대~현대 핵심 사건'},
+  생활과윤리: {n:'04', desc:'동·서양 윤리 사상'}
+};
+
+const FALLBACK_BANK = {
+  국어: {
+    중: [
+      {type:'mc', q:'다음 중 한글 맞춤법에 맞는 것은?', opts:['웬지','왠지','왼지','윈지'], a:1, ex:'"왠지"는 "왜인지"의 줄임말로 옳은 표기.', unit:'언어(문법)'},
+      {type:'mc', q:'다음 단어의 의미가 가장 적절한 것은?\n\n"각박하다"', opts:['인정이 없고 모질다','매우 단단하다','시간이 빠듯하다','모양이 거칠다'], a:0, ex:'"각박하다"는 인정이 없고 삭막하다.', unit:'어휘'},
+      {type:'mc', q:'정몽주의 「단심가」의 핵심 정서는?', opts:['이별의 슬픔','자연 예찬','충절','자조'], a:2, ex:'고려에 대한 변함없는 충절.', unit:'문학(고전시가)'},
+      {type:'short', q:'한자성어 "塞翁之馬"의 음을 쓰시오.', a:'새옹지마', ex:'길흉화복은 예측할 수 없음.', unit:'어휘'},
+      {type:'mc', q:'다음 중 비유법이 다른 하나는?', opts:['내 마음은 호수요','구름에 달 가듯이','님은 갔습니다','별을 노래하는 마음으로'], a:2, ex:'①②④는 비유.', unit:'문학(현대시)'},
+    ],
+    상: [
+      {type:'mc', q:'다음 작품의 갈래는?\n\n"동지(冬至)ㅅ달 기나긴 밤을 한 허리를 버혀 내여..."', opts:['평시조','사설시조','연시조','엇시조'], a:0, ex:'황진이의 평시조.', unit:'문학(고전시가)'},
+      {type:'mc', q:'다음 글의 주장으로 가장 적절한 것은?', passage:'사람들은 흔히 자유를 "하고 싶은 것을 마음대로 하는 것"이라 여긴다. 그러나 욕망에 끌려다니는 자는 결코 자유롭지 못하다.', opts:['자유는 모든 욕망 실현','진정한 자유는 자기 절제','방종도 자유의 한 형태','속박은 불가능'], a:1, ex:'자기 통제 능력이 핵심.', unit:'독서(비문학)'},
+      {type:'mc', q:'음운 변동 종류가 다른 것은?', opts:['국물 → [궁물]','맏이 → [마지]','꽃잎 → [꼰닙]','신라 → [실라]'], a:1, ex:'②는 구개음화.', unit:'언어(문법)'},
+      {type:'mc', q:'밑줄친 부분의 기능이 다른 것은?', opts:['그가 떠난 [것이] 분명하다','내가 본 [것은] 사실이다','먹을 [것이] 부족하다','읽을 [것이] 많다'], a:0, ex:'①은 사실의 의존명사.', unit:'언어(문법)'},
+      {type:'short', q:'다음 글의 서술 방식을 쓰시오.\n\n"고래는 어류와 달리 체온을 일정하게 유지하며..."', a:'대조', ex:'두 대상의 차이점.', unit:'독서(비문학)'},
+    ]
+  },
+  수학: {
+    중: [
+      {type:'mc', q:'함수 f(x) = x² - 4x + 3 의 최솟값은?', opts:['-1','0','1','3'], a:0, ex:'(x-2)²-1, x=2일 때 -1.', unit:'수학Ⅱ-함수극한'},
+      {type:'mc', q:'등차수열 a₁=3, a₅=19 ・ 공차 d는?', opts:['2','3','4','5'], a:2, ex:'4d=16 → d=4.', unit:'수학Ⅰ-수열'},
+      {type:'short', q:'lim(x→2) (x²-4)/(x-2) = ?', a:'4', ex:'x+2 → 4.', unit:'수학Ⅱ-함수극한'},
+      {type:'mc', q:'sin(π/6) + cos(π/3) = ?', opts:['1/2','1','√2/2','√3/2'], a:1, ex:'1/2+1/2=1.', unit:'수학Ⅰ-삼각함수'},
+      {type:'short', q:'y = x³ - 3x 의 x=1 미분계수는?', a:'0', ex:"y'=3x²-3, x=1 → 0.", unit:'수학Ⅱ-미분'},
+    ],
+    상: [
+      {type:'mc', q:'f(x) = x³ - 3x² + 2 의 극댓값과 극솟값의 차는?', opts:['2','4','6','8'], a:1, ex:'극대2, 극소-2.', unit:'수학Ⅱ-미분'},
+      {type:'mc', q:'∫₀¹ (3x² + 2x) dx = ?', opts:['1','2','3','4'], a:1, ex:'[x³+x²]₀¹ = 2.', unit:'수학Ⅱ-적분'},
+      {type:'short', q:'log₂ 12 - log₂ 3 = ?', a:'2', ex:'log₂ 4 = 2.', unit:'수학Ⅰ-지수로그'},
+      {type:'mc', q:'a₁=1, aₙ₊₁=2aₙ+1 ・ a₄ = ?', opts:['7','11','15','31'], a:2, ex:'a₂=3,a₃=7,a₄=15.', unit:'수학Ⅰ-수열'},
+      {type:'short', q:'벡터 a=(1,2), b=(3,k) 수직 ・ k = ?', a:'-3/2', ex:'a·b=0 → 3+2k=0.', unit:'기하'},
+    ]
+  },
+  한국사: {
+    중: [
+      {type:'mc', q:'신라 통일과 관련 없는 인물은?', opts:['김유신','문무왕','대조영','김춘추'], a:2, ex:'대조영은 발해.', unit:'남북국'},
+      {type:'mc', q:'고려 광종의 정책은?', opts:['훈요10조','노비안검법','별무반','전민변정도감'], a:1, ex:'노비안검법(956).', unit:'고려'},
+      {type:'mc', q:'세종 대 업적이 아닌 것은?', opts:['훈민정음','측우기','경국대전','집현전'], a:2, ex:'경국대전은 성종.', unit:'조선전기'},
+      {type:'short', q:'1894년 동학농민운동을 이끈 "녹두 장군"은?', a:'전봉준', ex:'전봉준.', unit:'개항기'},
+      {type:'mc', q:'무단 통치(1910~19)에 해당하는 것은?', opts:['치안유지법','조선태형령','국가총동원법','황국신민서사'], a:1, ex:'태형령은 1912년.', unit:'일제강점기'},
+    ],
+    상: [
+      {type:'mc', q:'다음 자료가 만들어진 시기는?\n\n"왕은 천명을 받아 ... 균전제를 실시하여..."', opts:['신라 하대','고려 초기','조선 전기','대한제국기'], a:1, ex:'고려 초.', unit:'고려'},
+      {type:'mc', q:'붕당 변천 순서로 옳은 것은?', opts:['동·서→남·북→노·소→일당','동·서→노·소→남·북→일당','남·북→동·서→노·소→일당','노·소→동·서→남·북→일당'], a:0, ex:'1575 동·서 시작.', unit:'조선후기'},
+      {type:'short', q:'1882년 임오년 봉기의 명칭은?', a:'임오군란', ex:'임오군란(1882).', unit:'개항기'},
+      {type:'mc', q:'1920년대 운동 중 성격이 다른 것은?', opts:['물산 장려','민립 대학 설립','광주 학생 항일','6·10 만세'], a:0, ex:'①은 실력 양성.', unit:'일제강점기'},
+      {type:'mc', q:'1948~1953년 사실로 옳지 않은 것은?', opts:['농지 개혁법','반민족 행위 처벌법','한·미 상호 방위 조약','경제 개발 5개년'], a:3, ex:'경제 개발은 1962년.', unit:'현대'},
+    ]
+  },
+  생활과윤리: {
+    중: [
+      {type:'mc', q:'칸트 도덕 행위의 기준은?', opts:['결과','쾌락','정언명령','공동체 이익'], a:2, ex:'칸트 의무론.', unit:'서양윤리'},
+      {type:'mc', q:'공리주의의 원리는?', opts:['최대 다수 최대 행복','만물의 척도','너 자신을 알라','인의예지'], a:0, ex:'벤담·밀.', unit:'서양윤리'},
+      {type:'short', q:'유교의 "남을 사랑하는 마음" 한 글자는?', a:'인', ex:'인(仁).', unit:'동양윤리'},
+      {type:'mc', q:'롤스 정의론의 장치는?', opts:['보이지 않는 손','무지의 베일','범주적 의무','자연 상태'], a:1, ex:'무지의 베일.', unit:'사회윤리'},
+      {type:'mc', q:'동물 도덕 고려 주장 사상가는?', opts:['칸트','싱어','데카르트','홉스'], a:1, ex:'피터 싱어.', unit:'생명윤리'},
+    ],
+    상: [
+      {type:'mc', q:'다음 사상가가 강조한 것은?\n\n"행위의 옳고 그름은 결과에 의해서만..."', opts:['의무','보편 법칙','최대 행복','자연법'], a:2, ex:'결과주의.', unit:'서양윤리'},
+      {type:'mc', q:'덕 윤리의 특징은?', opts:['결과 중시','행위 자체','품성과 덕','쾌락 총량'], a:2, ex:'행위자 중심.', unit:'서양윤리'},
+      {type:'short', q:'요나스가 강조한, 미래 세대에 대한 의무는?', a:'책임', ex:'책임 원칙.', unit:'평화윤리'},
+      {type:'mc', q:'롤스 "차등의 원칙"은?', opts:['동등한 자유','최소 수혜자에게 최대 이익','각자 그의 몫','다수 행복'], a:1, ex:'차등 원칙.', unit:'사회윤리'},
+      {type:'mc', q:'동양 자연관과 거리가 먼 것은?', opts:['천인합일','자연 정복(베이컨)','만물 불성','상생 조화'], a:1, ex:'베이컨은 서양.', unit:'문화윤리'},
+    ]
+  }
+};
+
+/* ============================================================
+   D-DAY & PHASE
+   ============================================================ */
+function calcDday(){
+  const t = new Date(); t.setHours(0,0,0,0);
+  return Math.ceil((SUNEUNG_DATE - t) / (1000*60*60*24));
+}
+function getCurrentPhase(){
+  const d = calcDday();
+  for(let i=0;i<PHASES.length;i++){
+    if(d >= PHASES[i].minDday) return {...PHASES[i], idx:i};
+  }
+  return {...PHASES[PHASES.length-1], idx:PHASES.length-1};
+}
+function renderPhaseBanner(){
+  const p = getCurrentPhase();
+  const d = calcDday();
+  document.getElementById('phase-tag').textContent = p.tag;
+  document.getElementById('phase-name').textContent = p.name;
+  document.getElementById('phase-desc').textContent = p.desc;
+
+  const next = PHASES[p.idx + 1];
+  if(next){
+    const total = (PHASES[p.idx].minDday) - next.minDday + 1;
+    const passed = PHASES[p.idx].minDday - d;
+    const pct = Math.min(100, Math.max(0, (passed/total)*100));
+    document.getElementById('phase-progress-text').textContent = `D-${PHASES[p.idx].minDday} → D-${next.minDday}`;
+    document.getElementById('phase-fill').style.width = pct + '%';
+  }else{
+    document.getElementById('phase-progress-text').textContent = `최종 단계 ・ D-${d}`;
+    document.getElementById('phase-fill').style.width = '100%';
+  }
+}
+
+document.getElementById('dday').textContent = calcDday();
+const today = new Date();
+const ymd = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+const wd = ['일','월','화','수','목','금','토'][today.getDay()];
+document.getElementById('today-date').textContent = `${ymd} (${wd})`;
+document.getElementById('footer-time').textContent = `최종 갱신 ${ymd}`;
+renderPhaseBanner();
+
+/* ============================================================
+   상태
+   ============================================================ */
+let currentUser = null;
+let userData = null;
+let selectedSubject = null;
+let selectedLevel = null;
+let currentTest = null;
+let testIsAIGenerated = false;
+let allStudentsCache = null; // 랭킹용
+
+/* ============================================================
+   저장소 ・ Google Sheets API 연동
+   ============================================================ */
+const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbyTKUGVQ_GJesHNz3r8NUiANMRDH9LDHjr9R4i7HaW5Rm9Ga-bkZlMjFOYkKlGdB6PtUA/exec';
+
+// Apps Script 호출 (POST + text/plain → CORS preflight 회피)
+async function callSheetsAPI(action, params = {}){
+  try{
+    const body = {action, ...params};
+    // data 같은 객체는 JSON.stringify
+    Object.keys(body).forEach(k => {
+      if(typeof body[k] === 'object' && body[k] !== null){
+        body[k] = JSON.stringify(body[k]);
+      }
+    });
+    const formData = new URLSearchParams(body);
+    const response = await fetch(SHEETS_API_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+      body: formData.toString(),
+      redirect: 'follow'
+    });
+    const text = await response.text();
+    let result;
+    try{ result = JSON.parse(text); }
+    catch(e){ console.error('Non-JSON response:', text.substring(0,300)); throw new Error('Sheets API가 JSON을 반환하지 않았습니다'); }
+    if(!result.ok) throw new Error(result.error || 'Sheets API error');
+    return result.data;
+  }catch(e){
+    console.error(`Sheets API ${action} failed:`, e);
+    throw e;
+  }
+}
+
+const DEFAULT_USER_DATA = () => ({
+  history:[], unitStats:{}, goal:null,
+  streak:{current:0, best:0, lastDate:null},
+  created: new Date().toISOString()
+});
+
+async function loadUserData(name){
+  try{
+    const data = await callSheetsAPI('getUser', {name});
+    if(!data) return DEFAULT_USER_DATA();
+    if(!data.unitStats) data.unitStats = {};
+    if(!data.streak) data.streak = {current:0, best:0, lastDate:null};
+    if(!data.history) data.history = [];
+    return data;
+  }catch(e){
+    alert('데이터 로딩 실패. 인터넷 연결과 시트 권한을 확인하세요.\n' + e.message);
+    return DEFAULT_USER_DATA();
+  }
+}
+
+async function saveUserData(name, data){
+  try{
+    await callSheetsAPI('saveUser', {name, data});
+  }catch(e){
+    alert('저장 실패: ' + e.message + '\n다시 시도해주세요.');
+  }
+}
+
+async function getStudentList(){
+  try{
+    return await callSheetsAPI('getStudentList');
+  }catch(e){
+    return [];
+  }
+}
+
+async function loadAllStudents(){
+  try{
+    const all = await callSheetsAPI('getAllStudents');
+    return all || [];
+  }catch(e){
+    return [];
+  }
+}
+
+/* ============================================================
+   스트릭 계산 (출석)
+   ============================================================ */
+function updateStreak(data){
+  const todayStr = new Date().toDateString();
+  const lastStr = data.streak.lastDate;
+
+  if(lastStr === todayStr){
+    // 오늘 이미 응시 - 변화 없음
+    return data.streak;
+  }
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  if(lastStr === yesterday.toDateString()){
+    // 어제 응시 - 연속
+    data.streak.current++;
+  }else{
+    // 그 외 - 리셋
+    data.streak.current = 1;
+  }
+  data.streak.lastDate = todayStr;
+  if(data.streak.current > data.streak.best) data.streak.best = data.streak.current;
+  return data.streak;
+}
+
+/* ============================================================
+   랭킹 계산
+   ============================================================ */
+async function calculateRank(name){
+  const all = allStudentsCache || await loadAllStudents();
+  allStudentsCache = all;
+  if(all.length < 2) return null;
+
+  const myAvg = (() => {
+    const m = all.find(x => x.name === name);
+    if(!m || !m.data.history.length) return 0;
+    const r = m.data.history.slice(-5);
+    return r.reduce((s,x)=>s+x.pct,0)/r.length;
+  })();
+
+  const others = all.map(x => {
+    const r = x.data.history.slice(-5);
+    return r.length ? r.reduce((s,p)=>s+p.pct,0)/r.length : 0;
+  });
+  others.sort((a,b) => b - a);
+  const myIdx = others.findIndex(v => v <= myAvg);
+  const rank = myIdx + 1;
+  const pct = Math.round((rank / all.length) * 100);
+  return {rank, total:all.length, percentile:pct, myAvg:Math.round(myAvg)};
+}
+
+/* ============================================================
+   목표 등급 → 권장 정답률 매핑
+   ============================================================ */
+function gradeToTargetPct(grade){
+  // 수능 등급 비율 기준 누적 백분율로 환산
+  // 1등급=상위4%, 2=11%, 3=23%, 4=40%, 5=60%, 6=77%, 7=89%, 8=96%
+  const map = {1:90, 2:80, 3:70, 4:60, 5:50, 6:40, 7:30, 8:20, 9:15};
+  return map[grade] || 60;
+}
+
+/* ============================================================
+   모드 전환
+   ============================================================ */
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const mode = tab.dataset.mode;
+    if(mode === 'student'){
+      document.getElementById('mode-student').style.display = '';
+      document.getElementById('mode-teacher').classList.remove('show');
+    }else{
+      document.getElementById('mode-student').style.display = 'none';
+      document.getElementById('mode-teacher').classList.add('show');
+      renderTeacherDashboard();
+    }
+  });
+});
+
+/* ============================================================
+   로그인
+   ============================================================ */
+document.getElementById('login-btn').addEventListener('click', login);
+document.getElementById('username-input').addEventListener('keypress', e => {
+  if(e.key === 'Enter') login();
+});
+document.getElementById('logout-btn').addEventListener('click', logout);
+
+async function login(){
+  const name = document.getElementById('username-input').value.trim();
+  if(!name) return;
+  currentUser = name;
+  userData = await loadUserData(name);
+  if(!userData.unitStats) userData.unitStats = {};
+  if(!userData.streak) userData.streak = {current:0, best:0, lastDate:null};
+
+  document.getElementById('user-status').innerHTML = `현재 학생 ・ <strong>${name}</strong>`;
+  document.getElementById('username-input').style.display = 'none';
+  document.getElementById('login-btn').style.display = 'none';
+  document.getElementById('logout-btn').style.display = '';
+  document.getElementById('goal-panel').style.display = 'flex';
+
+  // 스트릭 표시
+  if(userData.streak.current > 0){
+    const sb = document.getElementById('streak-display');
+    sb.style.display = '';
+    sb.innerHTML = `<span class="streak-badge">${userData.streak.current}일 연속</span>`;
+  }
+
+  renderGoalPanel();
+  renderDashboard();
+  renderSubjects();
+  applyRecommendations();
+  await updateRankDisplay();
+}
+
+function logout(){
+  currentUser = null; userData = null;
+  selectedSubject = null; selectedLevel = null;
+  document.getElementById('user-status').textContent = '미로그인 ・ 이름을 입력하세요';
+  document.getElementById('username-input').style.display = '';
+  document.getElementById('username-input').value = '';
+  document.getElementById('login-btn').style.display = '';
+  document.getElementById('logout-btn').style.display = 'none';
+  document.getElementById('streak-display').style.display = 'none';
+  document.getElementById('goal-panel').style.display = 'none';
+  document.getElementById('dashboard').classList.remove('show');
+  document.getElementById('subject-grid').innerHTML = '';
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active','recommended'));
+  document.getElementById('recommendation-note').style.display = 'none';
+  updateStartBtn();
+}
+
+/* ============================================================
+   목표 패널
+   ============================================================ */
+function renderGoalPanel(){
+  const display = document.getElementById('goal-display');
+  if(userData.goal){
+    display.innerHTML = `${userData.goal}등급<em>목표 정답률 ${gradeToTargetPct(userData.goal)}%</em>`;
+  }else{
+    display.textContent = '미설정';
+  }
+}
+
+document.getElementById('goal-edit-btn').addEventListener('click', () => {
+  const panel = document.getElementById('goal-panel');
+  const current = userData.goal || 3;
+  panel.querySelector('.goal-info').innerHTML = `
+    <div class="goal-form">
+      <span class="goal-label">목표 등급 :</span>
+      <select id="goal-select">
+        ${[1,2,3,4,5,6,7,8,9].map(g => `<option value="${g}" ${g===current?'selected':''}>${g}등급 (정답률 ${gradeToTargetPct(g)}%)</option>`).join('')}
+      </select>
+      <button class="goal-edit" id="goal-save">저장</button>
+    </div>
+  `;
+  document.getElementById('goal-edit-btn').style.display = 'none';
+  document.getElementById('goal-save').addEventListener('click', async () => {
+    const v = parseInt(document.getElementById('goal-select').value);
+    userData.goal = v;
+    await saveUserData(currentUser, userData);
+    document.getElementById('goal-edit-btn').style.display = '';
+    panel.querySelector('.goal-info').innerHTML = `
+      <div>
+        <div class="goal-label">목표 등급</div>
+        <div class="goal-target" id="goal-display"></div>
+      </div>
+      <div>
+        <div class="goal-label">현재 위치</div>
+        <div class="goal-rank" id="rank-display">-</div>
+      </div>
+    `;
+    renderGoalPanel();
+    await updateRankDisplay();
+    applyRecommendations();
+  });
+});
+
+async function updateRankDisplay(){
+  const el = document.getElementById('rank-display');
+  if(!el) return;
+  const r = await calculateRank(currentUser);
+  if(!r){ el.textContent = '응시자 부족'; return; }
+
+  let goalMsg = '';
+  if(userData.goal){
+    const target = gradeToTargetPct(userData.goal);
+    const diff = r.myAvg - target;
+    if(diff >= 0) goalMsg = ` ・ 목표 도달 (${diff >= 0 ? '+' : ''}${diff}%p)`;
+    else goalMsg = ` ・ 목표까지 ${Math.abs(diff)}%p`;
+  }
+
+  el.innerHTML = `상위 <strong>${r.percentile}%</strong> (${r.rank}/${r.total}명)${goalMsg}`;
+}
+
+/* ============================================================
+   대시보드
+   ============================================================ */
+function renderDashboard(){
+  const dash = document.getElementById('dashboard');
+  dash.classList.add('show');
+
+  if(!userData || userData.history.length === 0){
+    document.getElementById('total-tests').textContent = '0';
+    document.getElementById('avg-score').textContent = '-';
+    document.getElementById('recent-avg').textContent = '-';
+    document.getElementById('streak-val').textContent = '0';
+    document.getElementById('avg-trend').textContent = '데이터 없음';
+    document.getElementById('trend-direction').textContent = '데이터 없음';
+    document.getElementById('streak-best').textContent = '응시 시작 시 카운트';
+    document.getElementById('recent-test-date').textContent = '미응시';
+    document.getElementById('trend-chart').innerHTML = '<div style="width:100%;text-align:center;color:var(--muted);font-size:11px;font-family:JetBrains Mono;">기록 누적 시 표시</div>';
+    document.getElementById('unit-heatmap').innerHTML = '<div style="text-align:center;color:var(--muted);font-size:11px;font-family:JetBrains Mono;padding:30px 0;">단원별 정답률은<br/>1회 이상 응시 후 표시</div>';
+    return;
+  }
+
+  const h = userData.history;
+  const totalAvg = Math.round(h.reduce((s,x)=>s+x.pct,0)/h.length);
+  const recent5 = h.slice(-5);
+  const recentAvg = Math.round(recent5.reduce((s,x)=>s+x.pct,0)/recent5.length);
+  const lastDate = new Date(h[h.length-1].date);
+
+  document.getElementById('total-tests').textContent = h.length;
+  document.getElementById('avg-score').textContent = totalAvg;
+  document.getElementById('recent-avg').textContent = recentAvg;
+  document.getElementById('streak-val').textContent = userData.streak.current;
+  document.getElementById('streak-best').textContent = `최고 ${userData.streak.best}일`;
+  document.getElementById('recent-test-date').textContent = `최근 ${lastDate.getMonth()+1}.${lastDate.getDate()}`;
+
+  if(h.length >= 6){
+    const prev5 = h.slice(-10, -5);
+    if(prev5.length > 0){
+      const prevAvg = prev5.reduce((s,x)=>s+x.pct,0)/prev5.length;
+      const diff = recentAvg - prevAvg;
+      let dir;
+      if(diff > 5) dir = `↑ ${Math.round(diff)}%p 상승`;
+      else if(diff < -5) dir = `↓ ${Math.abs(Math.round(diff))}%p 하락`;
+      else dir = '─ 유지';
+      document.getElementById('trend-direction').textContent = dir;
+    }else{
+      document.getElementById('trend-direction').textContent = '─ 누적 중';
+    }
+  }else{
+    document.getElementById('trend-direction').textContent = '─ 누적 중';
+  }
+  document.getElementById('avg-trend').textContent = `누적 ${h.length}회`;
+
+  // 추세 그래프
+  const chart = document.getElementById('trend-chart');
+  chart.innerHTML = '';
+  const last10 = h.slice(-10);
+  last10.forEach(rec => {
+    const wrap = document.createElement('div');
+    wrap.className = 'bar-wrap';
+    const barH = Math.max(2, (rec.pct/100) * 110);
+    const cls = rec.pct >= 80 ? 'high' : rec.pct >= 50 ? 'mid' : 'low';
+    const d = new Date(rec.date);
+    wrap.innerHTML = `
+      <div style="position:relative;width:100%;height:110px;display:flex;align-items:flex-end">
+        <div class="bar ${cls}" style="height:${barH}px">
+          <span class="bar-val">${rec.pct}</span>
+        </div>
+      </div>
+      <div class="bar-date">${d.getMonth()+1}/${d.getDate()}</div>
+    `;
+    chart.appendChild(wrap);
+  });
+
+  renderUnitHeatmap();
+}
+
+function renderUnitHeatmap(){
+  const heat = document.getElementById('unit-heatmap');
+  heat.innerHTML = '';
+  const us = userData.unitStats || {};
+
+  let totalUnitsWithData = 0;
+  SUBJECTS.forEach(subj => {
+    const subjUnits = UNITS[subj];
+    const hasAny = subjUnits.some(u => us[`${subj}|${u}`]);
+    if(!hasAny) return;
+    totalUnitsWithData++;
+
+    const subjBox = document.createElement('div');
+    subjBox.className = 'heat-subject';
+    let html = `<div class="heat-subj-name">${subj}</div><div class="heat-units">`;
+    subjUnits.forEach(unit => {
+      const k = `${subj}|${unit}`;
+      const stat = us[k];
+      if(stat){
+        const pct = Math.round((stat.correct / stat.total) * 100);
+        const color = getHeatColor(pct);
+        html += `<div class="heat-cell" style="background:${color}" title="${unit} ${pct}% (${stat.correct}/${stat.total})">
+          <div class="heat-name">${unit}</div>
+          <div class="heat-pct">${pct}%</div>
+          <div class="heat-count">${stat.correct}/${stat.total}</div>
+        </div>`;
+      }
+    });
+    html += '</div>';
+    subjBox.innerHTML = html;
+    heat.appendChild(subjBox);
+  });
+
+  if(totalUnitsWithData === 0){
+    heat.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:11px;font-family:JetBrains Mono;padding:30px 0;">단원별 정답률은<br/>1회 이상 응시 후 표시</div>';
+  }
+}
+
+function getHeatColor(pct){
+  if(pct >= 80) return 'rgba(44,95,93,0.3)';
+  if(pct >= 60) return 'rgba(212,160,23,0.2)';
+  if(pct >= 40) return 'rgba(212,160,23,0.4)';
+  return 'rgba(192,57,43,0.3)';
+}
+
+/* ============================================================
+   추천 (페이즈 + 목표 반영)
+   ============================================================ */
+function recommendLevel(subject){
+  const phase = getCurrentPhase();
+  const goalPct = userData && userData.goal ? gradeToTargetPct(userData.goal) : 60;
+
+  if(!userData || userData.history.length === 0){
+    return {level:'중', reason:'첫 응시 - 중급 추천', subjectFocus:null, weakUnits:[], phase};
+  }
+
+  const h = userData.history;
+  let relevant = h;
+  if(subject){
+    const sh = h.filter(x => x.subject === subject);
+    if(sh.length > 0) relevant = sh;
+  }
+
+  const recent = relevant.slice(-5);
+  const avg = recent.reduce((s,x)=>s+x.pct,0)/recent.length;
+
+  let level, reason;
+  // 페이즈 4(마무리)는 약점 위주 → 무조건 중급으로 안정
+  if(phase.finalMode){
+    level = avg >= 75 ? '상' : '중';
+    reason = `마무리 단계 - 누적 오답·약점 단원 집중`;
+  }else{
+    // 페이즈 3 부스트 적용
+    const threshold = phase.recommendBoost === 1 ? 70 : 80;
+    if(avg >= threshold){
+      level = '상';
+      reason = `최근 ${Math.round(avg)}% - 상급 도전`;
+    }else if(avg >= 60){
+      const last2 = relevant.slice(-2);
+      if(last2.length === 2 && last2.every(x => x.pct >= 80)){
+        level = '상'; reason = `직전 2회 우수 - 상급 시도`;
+      }else{
+        level = '중'; reason = `최근 ${Math.round(avg)}% - 중급 유지`;
+      }
+    }else{
+      level = '중';
+      reason = `최근 ${Math.round(avg)}% - 기본 다지기`;
+    }
+
+    // 목표 등급 반영: 목표보다 이미 높으면 도전, 한참 낮으면 안정
+    if(userData.goal){
+      const diff = avg - goalPct;
+      if(diff >= 10 && level === '중') {
+        level = '상';
+        reason = `목표(${goalPct}%) 초과 - 상급 도전`;
+      }else if(diff <= -20 && level === '상') {
+        level = '중';
+        reason = `목표까지 ${Math.abs(Math.round(diff))}%p - 기본 강화`;
+      }
+    }
+  }
+
+  // 약점 과목
+  const subjectAvg = {};
+  SUBJECTS.forEach(s => {
+    const sh = h.filter(x => x.subject === s);
+    if(sh.length > 0) subjectAvg[s] = sh.reduce((sum,x)=>sum+x.pct,0)/sh.length;
+  });
+  let weakest = null, minAvg = Infinity;
+  Object.entries(subjectAvg).forEach(([s,v]) => { if(v < minAvg){ minAvg = v; weakest = s; } });
+
+  // 약점 단원
+  let weakUnits = [];
+  if(subject && userData.unitStats){
+    const subjUnits = UNITS[subject];
+    const unitData = subjUnits.map(u => {
+      const k = `${subject}|${u}`;
+      const stat = userData.unitStats[k];
+      if(stat && stat.total >= 2){
+        return {unit:u, pct: stat.correct/stat.total, total:stat.total};
+      }
+      return null;
+    }).filter(x => x);
+    weakUnits = unitData.filter(x => x.pct < 0.7).sort((a,b) => a.pct - b.pct).slice(0, 3).map(x => x.unit);
+  }
+
+  return {level, reason, subjectFocus:weakest, weakUnits, phase};
+}
+
+function renderSubjects(){
+  const grid = document.getElementById('subject-grid');
+  grid.innerHTML = '';
+  const rec = recommendLevel();
+
+  SUBJECTS.forEach(name => {
+    let subjAvg = null;
+    if(userData && userData.history){
+      const sh = userData.history.filter(x => x.subject === name);
+      if(sh.length > 0) subjAvg = Math.round(sh.reduce((s,x)=>s+x.pct,0)/sh.length);
+    }
+    const isFocus = name === rec.subjectFocus;
+    const btn = document.createElement('button');
+    btn.className = 'subj-card';
+    btn.dataset.subject = name;
+    btn.innerHTML = `
+      <span class="subj-num">No. ${subjectInfo[name].n}</span>
+      <div class="subj-name">${name}</div>
+      <div class="subj-desc">${subjectInfo[name].desc}</div>
+      <div class="subj-rec ${isFocus ? 'active-rec' : ''}">
+        ${subjAvg !== null ? `평균 ${subjAvg}%` : '미응시'}
+        ${isFocus ? ' ・ 집중 필요' : ''}
+      </div>
+    `;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.subj-card').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      selectedSubject = name;
+      applyRecommendations();
+      updateStartBtn();
+    });
+    grid.appendChild(btn);
+  });
+}
+
+function applyRecommendations(){
+  if(!userData) return;
+  const rec = recommendLevel(selectedSubject);
+  document.querySelectorAll('.level-btn').forEach(b => {
+    b.classList.remove('recommended');
+    if(b.dataset.level === rec.level) b.classList.add('recommended');
+  });
+
+  const note = document.getElementById('recommendation-note');
+  const text = document.getElementById('rec-text');
+  if(userData.history.length > 0){
+    let msg = `${selectedSubject ? selectedSubject + ' ・ ' : '전체 ・ '}${rec.reason}.`;
+    msg += ` <em style="color:var(--muted);font-style:normal">[${rec.phase.tag}: ${rec.phase.name}]</em>`;
+    if(rec.subjectFocus && rec.subjectFocus !== selectedSubject && !selectedSubject){
+      msg += ` 약점 과목: <strong>${rec.subjectFocus}</strong>.`;
+    }
+    if(rec.weakUnits && rec.weakUnits.length > 0){
+      msg += `<br/>약점 단원: <strong>${rec.weakUnits.join(', ')}</strong> ・ 다음 시험에 비중 강화`;
+    }
+    if(rec.phase.finalMode){
+      msg += `<br/><strong style="color:var(--accent)">마무리 모드 ・ 새 단원 출제 최소화 · 누적 오답 위주</strong>`;
+    }
+    text.innerHTML = msg;
+    note.style.display = 'block';
+  }else{
+    note.style.display = 'none';
+  }
+}
+
+document.querySelectorAll('.level-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedLevel = btn.dataset.level;
+    updateStartBtn();
+  });
+});
+
+function updateStartBtn(){
+  const btn = document.getElementById('start-btn');
+  if(currentUser && selectedSubject && selectedLevel){
+    btn.disabled = false;
+    btn.textContent = `${selectedSubject} ・ ${selectedLevel}급 시험 시작`;
+  }else{
+    btn.disabled = true;
+    btn.textContent = currentUser ? '시 험 ・ 시 작' : '먼저 이름을 입력하세요';
+  }
+}
+
+/* ============================================================
+   AI 문제 생성 (페이즈·목표·약점 반영)
+   ============================================================ */
+async function generateAIQuestions(subject, level){
+  const phase = getCurrentPhase();
+  const goal = userData.goal;
+  const goalPct = goal ? gradeToTargetPct(goal) : null;
+
+  const recentScore = userData.history.length > 0
+    ? Math.round(userData.history.slice(-5).reduce((s,x)=>s+x.pct,0)/Math.min(5,userData.history.length))
+    : 50;
+
+  const askedQuestions = userData.history
+    .flatMap(h => h.questions || [])
+    .map(q => q.q.substring(0, 40))
+    .slice(-30);
+
+  // 누적 오답 (마무리 모드용)
+  const wrongQuestions = userData.history
+    .flatMap(h => (h.questions || []).filter(q => !q.correct))
+    .slice(-15);
+
+  const rec = recommendLevel(subject);
+  const weakUnits = rec.weakUnits || [];
+  const subjUnits = UNITS[subject];
+
+  let phaseInstruction = '';
+  if(phase.finalMode){
+    phaseInstruction = `\n[마무리 페이즈 - 중요]
+- 새로운 개념 출제 자제
+- 약점 단원 ${weakUnits.length > 0 ? weakUnits.join(', ') : '전 단원'}에서 핵심 빈출 유형만
+- 학생이 자주 틀리는 패턴: ${wrongQuestions.slice(0,5).map(w => w.unit).join(', ') || '데이터 부족'}`;
+  }else if(phase.idx === 1){
+    phaseInstruction = `\n[6월 모평 직후 페이즈]\n- 약점 단원 비중 50% 이상\n- 모평 빈출 유형 의식`;
+  }else if(phase.idx === 2){
+    phaseInstruction = `\n[9월 모평 직후 ・ 실전 페이즈]\n- 실전 수능형 위주\n- 시간 압박형 문항\n- 약점 단원 ${weakUnits.join(', ') || '집중'}`;
+  }
+
+  const goalInstruction = goal ? `\n[학생 목표]\n- 목표 등급: ${goal}등급 (정답률 ${goalPct}% 도달 필요)\n- 현재 ${recentScore}% → 목표까지 ${goalPct - recentScore}%p` : '';
+
+  const prompt = `당신은 한국 수능 출제 전문가입니다. 학생을 위한 ${subject} ${level}급 쪽지시험 5문항을 생성하세요.
+
+학생 정보:
+- 최근 평균: ${recentScore}% / 응시 ${userData.history.length}회
+- 연속 응시: ${userData.streak.current}일
+- 과목: ${subject} / 난이도: ${level}급
+${weakUnits.length > 0 ? `- 약점 단원: ${weakUnits.join(', ')} (5문항 중 최소 2문항)` : ''}
+- 사용 단원: ${subjUnits.join(', ')}
+${askedQuestions.length > 0 ? `- 최근 출제 (중복금지):\n${askedQuestions.slice(0,8).map(q=>'  · '+q).join('\n')}` : ''}
+${phaseInstruction}
+${goalInstruction}
+
+요구사항:
+1. 5문항 중 4문항 5지선다, 1문항 단답형
+2. ${level === '상' ? '실전 수능형 추론·심화' : '핵심 개념 확인 기본형'}
+3. 각 문제에 unit 필드 정확히 표기
+4. 명확한 해설
+
+JSON 형식으로만 응답하세요. 다른 텍스트 절대 금지:
+[
+  {"type":"mc","q":"문제","passage":"지문(없으면 빈 문자열)","opts":["선택1","선택2","선택3","선택4","선택5"],"a":0,"ex":"해설","unit":"단원라벨"},
+  {"type":"short","q":"단답형","a":"정답","ex":"해설","unit":"단원라벨"}
+]`;
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 3000,
+        messages: [{role:"user", content:prompt}]
+      })
+    });
+    const data = await response.json();
+    const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
+    const cleaned = text.replace(/```json|```/g, '').trim();
+    const questions = JSON.parse(cleaned);
+    if(!Array.isArray(questions) || questions.length < 3) throw new Error('Invalid');
+    questions.forEach(q => {
+      if(!q.unit || !subjUnits.includes(q.unit)) q.unit = subjUnits[0];
+    });
+    return questions.slice(0, 5);
+  }catch(e){
+    console.error('AI generation failed:', e);
+    return null;
+  }
+}
+
+/* ============================================================
+   시험
+   ============================================================ */
+document.getElementById('start-btn').addEventListener('click', startTest);
+document.getElementById('restart-btn').addEventListener('click', restart);
+document.getElementById('submit-btn').addEventListener('click', submitTest);
+
+async function startTest(){
+  document.getElementById('stage-select').style.display = 'none';
+  document.getElementById('dashboard').classList.remove('show');
+
+  const phase = getCurrentPhase();
+  document.getElementById('loading-text').textContent =
+    phase.finalMode ? '마무리 모드 ・ 누적 오답을 분석하여 출제 중…' :
+    '약점 단원과 페이즈에 맞춰 새 문제 생성 중…';
+
+  testIsAIGenerated = false;
+  if(userData.history.length >= 1){
+    document.getElementById('loading').classList.add('show');
+    const aiQs = await generateAIQuestions(selectedSubject, selectedLevel);
+    document.getElementById('loading').classList.remove('show');
+    if(aiQs && aiQs.length >= 3){
+      currentTest = aiQs;
+      testIsAIGenerated = true;
+    }
+  }
+
+  if(!currentTest){
+    const pool = [...FALLBACK_BANK[selectedSubject][selectedLevel]];
+    pool.sort(() => Math.random() - 0.5);
+    currentTest = pool.slice(0, 5);
+  }
+
+  document.getElementById('stage-test').classList.add('active');
+  document.getElementById('scorecard').classList.remove('show');
+  document.getElementById('level-change-msg').innerHTML = '';
+  document.getElementById('unit-summary').innerHTML = '';
+  document.getElementById('rank-msg-result').innerHTML = '';
+
+  const titleEl = document.getElementById('test-title');
+  titleEl.innerHTML = `${selectedSubject} ・ ${selectedLevel}급${testIsAIGenerated ? '<span class="ai-tag">AI 출제</span>' : ''}<small>${phase.tag} ・ ${phase.name}</small>`;
+
+  const now = new Date();
+  document.getElementById('test-meta-date').textContent = `${ymd} (${wd})`;
+  document.getElementById('test-meta-time').textContent = `시작 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  document.getElementById('test-meta-user').textContent = `응시자 ${currentUser}`;
+
+  renderQuestions();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderQuestions(){
+  const container = document.getElementById('questions-container');
+  container.innerHTML = '';
+  currentTest.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.dataset.idx = idx;
+    let html = `<span class="q-num">문 ${String(idx+1).padStart(2,'0')}</span>`;
+    if(q.unit) html += `<span class="q-unit-tag">${q.unit}</span>`;
+    html += `<div class="q-text" style="margin-top:10px">${q.q}</div>`;
+    if(q.passage && q.passage.trim()){
+      html += `<div class="q-passage">${q.passage}</div>`;
+    }
+    if(q.type === 'mc'){
+      html += `<div class="options">`;
+      q.opts.forEach((opt, i) => {
+        html += `<label class="option-label"><input type="radio" name="q${idx}" value="${i}"><span class="option-num">${['①','②','③','④','⑤'][i]}</span><span>${opt}</span></label>`;
+      });
+      html += `</div>`;
+    } else {
+      html += `<input type="text" class="short-input" name="q${idx}" placeholder="답을 입력하세요" autocomplete="off">`;
+    }
+    html += `<div class="explanation"></div>`;
+    div.innerHTML = html;
+    container.appendChild(div);
+  });
+}
+
+async function submitTest(){
+  let correct = 0;
+  const detailedResults = [];
+  const unitDelta = {};
+
+  currentTest.forEach((q, idx) => {
+    const qEl = document.querySelector(`.question[data-idx="${idx}"]`);
+    let isCorrect = false;
+
+    if(q.type === 'mc'){
+      const checked = qEl.querySelector(`input[name="q${idx}"]:checked`);
+      if(checked){
+        const userAnswer = parseInt(checked.value);
+        isCorrect = userAnswer === q.a;
+        qEl.querySelectorAll('.option-label').forEach((lbl, i) => {
+          if(i === q.a) lbl.classList.add('correct');
+          if(i === userAnswer && !isCorrect) lbl.classList.add('wrong');
+        });
+      } else {
+        qEl.querySelectorAll('.option-label').forEach((lbl, i) => {
+          if(i === q.a) lbl.classList.add('correct');
+        });
+      }
+    } else {
+      const input = qEl.querySelector('.short-input');
+      const userAnswer = input.value.trim();
+      isCorrect = userAnswer.replace(/\s+/g,'') === q.a.replace(/\s+/g,'');
+      input.style.color = isCorrect ? 'var(--correct)' : 'var(--wrong)';
+      input.style.borderBottomColor = isCorrect ? 'var(--correct)' : 'var(--wrong)';
+      input.disabled = true;
+      if(!isCorrect){
+        const ans = document.createElement('div');
+        ans.style.cssText = 'font-family:JetBrains Mono;font-size:12px;color:var(--correct);margin-top:6px';
+        ans.textContent = `정답: ${q.a}`;
+        input.parentNode.insertBefore(ans, input.nextSibling);
+      }
+    }
+
+    const expEl = qEl.querySelector('.explanation');
+    expEl.innerHTML = `<strong>${isCorrect ? '✓ 정답' : '✗ 오답'} ・ 해설</strong>${q.ex}`;
+    expEl.classList.add('show');
+    qEl.classList.add(isCorrect ? 'correct' : 'wrong');
+    if(isCorrect) correct++;
+
+    qEl.querySelectorAll('input').forEach(i => i.disabled = true);
+    detailedResults.push({q: q.q.substring(0,60), correct: isCorrect, unit: q.unit});
+
+    if(q.unit){
+      const k = `${selectedSubject}|${q.unit}`;
+      if(!unitDelta[k]) unitDelta[k] = {correct:0, total:0};
+      unitDelta[k].total++;
+      if(isCorrect) unitDelta[k].correct++;
+    }
+  });
+
+  const pct = Math.round((correct / currentTest.length) * 100);
+  document.getElementById('score-val').textContent = correct;
+  document.getElementById('score-total').textContent = currentTest.length;
+
+  let msg;
+  if(pct === 100) msg = '"완벽합니다."';
+  else if(pct >= 80) msg = '"안정적인 흐름. 상급 도전 권장."';
+  else if(pct >= 60) msg = '"기본은 잡혔습니다."';
+  else if(pct >= 40) msg = '"개념 재정비가 시급합니다."';
+  else msg = '"오답을 노트 정리. 내일 같은 범위 재시험."';
+  document.getElementById('score-msg').textContent = msg;
+
+  // 단원별 결과
+  const summaryEl = document.getElementById('unit-summary');
+  const unitParts = Object.entries(unitDelta).map(([k,v]) => {
+    const unit = k.split('|')[1];
+    const p = Math.round((v.correct/v.total)*100);
+    const color = p >= 70 ? 'var(--correct)' : p >= 40 ? 'var(--warn)' : 'var(--wrong)';
+    return `<span style="color:${color}">${unit}: ${v.correct}/${v.total}</span>`;
+  });
+  if(unitParts.length > 0){
+    summaryEl.innerHTML = `이번 회 단원별 ・ ${unitParts.join(' ・ ')}`;
+  }
+
+  const prevRec = userData.history.length > 0 ? recommendLevel() : null;
+
+  // 누적
+  Object.entries(unitDelta).forEach(([k, v]) => {
+    if(!userData.unitStats[k]) userData.unitStats[k] = {correct:0, total:0};
+    userData.unitStats[k].correct += v.correct;
+    userData.unitStats[k].total += v.total;
+  });
+
+  // 스트릭 업데이트
+  updateStreak(userData);
+
+  userData.history.push({
+    date: new Date().toISOString(),
+    subject: selectedSubject,
+    level: selectedLevel,
+    score: correct,
+    total: currentTest.length,
+    pct,
+    aiGenerated: testIsAIGenerated,
+    questions: detailedResults,
+    unitDelta,
+    phase: getCurrentPhase().tag
+  });
+  await saveUserData(currentUser, userData);
+  allStudentsCache = null; // 캐시 무효화
+
+  // 스트릭 표시 갱신
+  if(userData.streak.current > 0){
+    const sb = document.getElementById('streak-display');
+    sb.style.display = '';
+    sb.innerHTML = `<span class="streak-badge">${userData.streak.current}일 연속</span>`;
+  }
+
+  const newRec = recommendLevel();
+  const lvChangeEl = document.getElementById('level-change-msg');
+  if(prevRec && prevRec.level !== newRec.level){
+    if(newRec.level === '상'){
+      lvChangeEl.innerHTML = `<div class="level-change up">▲ 다음부터 상급 추천 ・ ${newRec.reason}</div>`;
+    }else{
+      lvChangeEl.innerHTML = `<div class="level-change down">▼ 다음부터 중급 추천 ・ ${newRec.reason}</div>`;
+    }
+  }else{
+    lvChangeEl.innerHTML = `<div class="level-change same">─ 다음 추천: ${newRec.level}급 ・ ${newRec.reason}</div>`;
+  }
+
+  // 랭킹 메시지
+  const r = await calculateRank(currentUser);
+  if(r){
+    let goalAchieved = '';
+    if(userData.goal){
+      const target = gradeToTargetPct(userData.goal);
+      if(r.myAvg >= target){
+        goalAchieved = ` ・ 목표 ${userData.goal}등급 달성 중`;
+      }
+    }
+    document.getElementById('rank-msg-result').innerHTML = `<div class="rank-message">★ 독서실 내 상위 ${r.percentile}% (${r.rank}/${r.total}명)${goalAchieved}</div>`;
+  }
+
+  // 스트릭 축하
+  if(userData.streak.current > 0 && userData.streak.current % 7 === 0){
+    document.getElementById('rank-msg-result').innerHTML += `<div class="rank-message" style="color:var(--gold)">🔥 ${userData.streak.current}일 연속 응시 ・ 꾸준함이 가장 큰 무기</div>`;
+  }
+
+  document.getElementById('scorecard').classList.add('show');
+  document.getElementById('submit-btn').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function restart(){
+  document.getElementById('stage-test').classList.remove('active');
+  document.getElementById('stage-select').style.display = 'block';
+  document.getElementById('submit-btn').style.display = '';
+  document.querySelectorAll('.subj-card, .level-btn').forEach(b => b.classList.remove('active'));
+  selectedSubject = null;
+  selectedLevel = null;
+  currentTest = null;
+  renderDashboard();
+  renderSubjects();
+  applyRecommendations();
+  await updateRankDisplay();
+  updateStartBtn();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ============================================================
+   선생님 대시보드
+   ============================================================ */
+async function renderTeacherDashboard(){
+  const all = await loadAllStudents();
+  const tbody = document.getElementById('student-tbody');
+  const noStudents = document.getElementById('no-students');
+  const tableWrap = document.getElementById('student-table');
+
+  if(all.length === 0){
+    tableWrap.style.display = 'none';
+    noStudents.style.display = 'block';
+    document.getElementById('teacher-stats').innerHTML = '';
+    document.getElementById('teacher-subject-stats').innerHTML = '';
+    return;
+  }
+
+  tableWrap.style.display = '';
+  noStudents.style.display = 'none';
+
+  const totalStudents = all.length;
+  const totalTests = all.reduce((s,x)=>s+x.data.history.length,0);
+  const allPcts = all.flatMap(x => x.data.history.map(h=>h.pct));
+  const overallAvg = allPcts.length > 0 ? Math.round(allPcts.reduce((s,p)=>s+p,0)/allPcts.length) : 0;
+  const todayStr = new Date().toDateString();
+  const todayCount = all.reduce((s,x) => s + x.data.history.filter(h => new Date(h.date).toDateString() === todayStr).length, 0);
+  const todayStudents = all.filter(x => x.data.history.some(h => new Date(h.date).toDateString() === todayStr)).length;
+  const absentToday = totalStudents - todayStudents;
+
+  document.getElementById('teacher-stats').innerHTML = `
+    <div class="stat-cell">
+      <div class="dash-label">등록 학생</div>
+      <div class="dash-value">${totalStudents}<em>명</em></div>
+    </div>
+    <div class="stat-cell">
+      <div class="dash-label">오늘 응시</div>
+      <div class="dash-value">${todayStudents}<em>명 / ${totalStudents}</em></div>
+      <div class="dash-sub" style="color:${absentToday > 0 ? 'var(--wrong)' : 'var(--correct)'}">${absentToday > 0 ? `미응시 ${absentToday}명` : '전원 응시'}</div>
+    </div>
+    <div class="stat-cell">
+      <div class="dash-label">누적 응시</div>
+      <div class="dash-value">${totalTests}<em>회</em></div>
+      <div class="dash-sub">오늘 +${todayCount}회</div>
+    </div>
+    <div class="stat-cell">
+      <div class="dash-label">전체 평균</div>
+      <div class="dash-value">${overallAvg}<em>%</em></div>
+    </div>
+  `;
+
+  tbody.innerHTML = '';
+  all.sort((a,b) => new Date(b.data.history[b.data.history.length-1].date) - new Date(a.data.history[a.data.history.length-1].date));
+
+  all.forEach(({name, data}) => {
+    const h = data.history;
+    const totalAvg = Math.round(h.reduce((s,x)=>s+x.pct,0)/h.length);
+    const recent5 = h.slice(-5);
+    const recentAvg = Math.round(recent5.reduce((s,x)=>s+x.pct,0)/recent5.length);
+    const lastDate = new Date(h[h.length-1].date);
+    const dateStr = `${lastDate.getMonth()+1}/${lastDate.getDate()}`;
+    const isToday = lastDate.toDateString() === todayStr;
+    const daysSince = Math.floor((new Date() - lastDate) / (1000*60*60*24));
+
+    const us = data.unitStats || {};
+    let weakest = null, minP = Infinity;
+    Object.entries(us).forEach(([k, v]) => {
+      if(v.total >= 2){
+        const p = v.correct / v.total;
+        if(p < minP){ minP = p; weakest = {key:k, pct:p}; }
+      }
+    });
+    const weakStr = weakest ? `${weakest.key.split('|').join('/')} (${Math.round(weakest.pct*100)}%)` : '-';
+
+    const goalStr = data.goal ? `${data.goal}등급` : '미설정';
+    const streakStr = data.streak && data.streak.current > 0 ? `🔥${data.streak.current}일` : '-';
+
+    const tr = document.createElement('tr');
+    tr.dataset.name = name;
+    tr.innerHTML = `
+      <td class="name">${name}${!isToday && daysSince >= 1 ? ` <span class="absent-tag">미응시 ${daysSince}일</span>` : ''}</td>
+      <td>${h.length}회</td>
+      <td><span class="pct-pill ${pillClass(totalAvg)}">${totalAvg}%</span></td>
+      <td><span class="pct-pill ${pillClass(recentAvg)}">${recentAvg}%</span></td>
+      <td class="streak-tag">${streakStr}</td>
+      <td style="font-family:'Nanum Myeongjo',serif;font-weight:700">${goalStr}</td>
+      <td class="weak-tag">${weakStr}</td>
+      <td style="font-family:JetBrains Mono;font-size:11px">${dateStr}</td>
+      <td><button class="goal-edit" onclick="event.stopPropagation();generateReport('${name}')">출력</button></td>
+    `;
+    tr.addEventListener('click', () => showStudentDetail(name, data));
+    tbody.appendChild(tr);
+  });
+
+  renderSubjectStats(all);
+}
+
+function pillClass(pct){
+  if(pct >= 80) return 'high';
+  if(pct >= 60) return 'mid';
+  if(pct >= 1) return 'low';
+  return 'none';
+}
+
+function renderSubjectStats(allData){
+  const container = document.getElementById('teacher-subject-stats');
+  container.innerHTML = '';
+  let hasAny = false;
+
+  SUBJECTS.forEach(subj => {
+    const allTests = allData.flatMap(x => x.data.history.filter(h => h.subject === subj));
+    if(allTests.length === 0) return;
+    hasAny = true;
+
+    const subjAvg = Math.round(allTests.reduce((s,x)=>s+x.pct,0)/allTests.length);
+
+    const unitTotals = {};
+    UNITS[subj].forEach(u => unitTotals[u] = {correct:0, total:0});
+    allData.forEach(({data}) => {
+      const us = data.unitStats || {};
+      UNITS[subj].forEach(u => {
+        const k = `${subj}|${u}`;
+        if(us[k]){
+          unitTotals[u].correct += us[k].correct;
+          unitTotals[u].total += us[k].total;
+        }
+      });
+    });
+
+    let html = `<div class="trend-box" style="margin-bottom:16px"><div class="trend-title">${subj} <small>응시 ${allTests.length}회 ・ 전체평균 ${subjAvg}%</small></div><div class="heat-units" style="margin-top:8px">`;
+    UNITS[subj].forEach(u => {
+      const t = unitTotals[u];
+      if(t.total === 0){
+        html += `<div class="heat-cell" style="background:rgba(0,0,0,0.04);opacity:0.5"><div class="heat-name">${u}</div><div class="heat-pct">-</div><div class="heat-count">미응시</div></div>`;
+      }else{
+        const p = Math.round((t.correct/t.total)*100);
+        const color = getHeatColor(p);
+        html += `<div class="heat-cell" style="background:${color}" title="${u} ${p}%"><div class="heat-name">${u}</div><div class="heat-pct">${p}%</div><div class="heat-count">${t.correct}/${t.total}</div></div>`;
+      }
+    });
+    html += `</div></div>`;
+    container.innerHTML += html;
+  });
+
+  if(!hasAny){
+    container.innerHTML = '<div class="empty-state">아직 응시 기록이 없습니다.</div>';
+  }
+}
+
+/* ============================================================
+   학생 상세 모달
+   ============================================================ */
+function showStudentDetail(name, data){
+  const overlay = document.getElementById('modal-overlay');
+  const body = document.getElementById('modal-body');
+
+  const h = data.history;
+  const totalAvg = Math.round(h.reduce((s,x)=>s+x.pct,0)/h.length);
+  const recent10 = h.slice(-10);
+
+  let html = `
+    <h3>${name} ・ 학습 상세</h3>
+    <div style="font-family:JetBrains Mono;font-size:11px;color:var(--muted);margin-bottom:18px;letter-spacing:1px">
+      누적 ${h.length}회 ・ 전체 평균 ${totalAvg}% ・ 목표 ${data.goal ? data.goal + '등급' : '미설정'} ・ 스트릭 ${data.streak ? data.streak.current : 0}일
+    </div>
+    <div class="trend-box">
+      <div class="trend-title">정답률 추이 <small>최근 10회</small></div>
+      <div class="trend-chart">
+  `;
+  recent10.forEach(rec => {
+    const barH = Math.max(2, (rec.pct/100) * 110);
+    const cls = rec.pct >= 80 ? 'high' : rec.pct >= 50 ? 'mid' : 'low';
+    const d = new Date(rec.date);
+    html += `
+      <div class="bar-wrap">
+        <div style="position:relative;width:100%;height:110px;display:flex;align-items:flex-end">
+          <div class="bar ${cls}" style="height:${barH}px"><span class="bar-val">${rec.pct}</span></div>
+        </div>
+        <div class="bar-date">${d.getMonth()+1}/${d.getDate()}<br/>${rec.subject.substr(0,2)}</div>
+      </div>`;
+  });
+  html += `</div></div><div style="height:18px"></div>`;
+
+  html += `<div class="trend-box"><div class="trend-title">단원별 정답률</div><div class="heatmap" style="max-height:none">`;
+  let hasUnitData = false;
+  SUBJECTS.forEach(subj => {
+    const us = data.unitStats || {};
+    const subjUnits = UNITS[subj];
+    const hasAny = subjUnits.some(u => us[`${subj}|${u}`]);
+    if(!hasAny) return;
+    hasUnitData = true;
+    html += `<div class="heat-subject"><div class="heat-subj-name">${subj}</div><div class="heat-units">`;
+    subjUnits.forEach(unit => {
+      const k = `${subj}|${unit}`;
+      const stat = us[k];
+      if(stat){
+        const pct = Math.round((stat.correct / stat.total) * 100);
+        const color = getHeatColor(pct);
+        html += `<div class="heat-cell" style="background:${color}"><div class="heat-name">${unit}</div><div class="heat-pct">${pct}%</div><div class="heat-count">${stat.correct}/${stat.total}</div></div>`;
+      }
+    });
+    html += '</div></div>';
+  });
+  if(!hasUnitData) html += '<div style="color:var(--muted);font-size:11px;text-align:center;padding:20px">단원별 데이터 없음</div>';
+  html += `</div></div>`;
+
+  html += `<div class="modal-actions"><button class="btn-primary" onclick="generateReport('${name}')">주간 리포트 생성</button><button class="btn-secondary" onclick="document.getElementById('modal-overlay').classList.remove('show')">닫기</button></div>`;
+
+  body.innerHTML = html;
+  overlay.classList.add('show');
+}
+
+document.getElementById('modal-close').addEventListener('click', () => {
+  document.getElementById('modal-overlay').classList.remove('show');
+});
+document.getElementById('modal-overlay').addEventListener('click', (e) => {
+  if(e.target.id === 'modal-overlay'){
+    document.getElementById('modal-overlay').classList.remove('show');
+  }
+});
+
+/* ============================================================
+   주간 리포트 (HTML 인쇄)
+   ============================================================ */
+async function generateReport(name){
+  const data = await loadUserData(name);
+  if(!data.history || data.history.length === 0){
+    alert('응시 기록이 없습니다.');
+    return;
+  }
+
+  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+  const weekTests = data.history.filter(h => new Date(h.date) >= weekAgo);
+  const totalTests = weekTests.length;
+  const weekAvg = totalTests > 0 ? Math.round(weekTests.reduce((s,x)=>s+x.pct,0)/totalTests) : 0;
+  const overallAvg = Math.round(data.history.reduce((s,x)=>s+x.pct,0)/data.history.length);
+
+  // 과목별 주간 통계
+  const bySubject = {};
+  weekTests.forEach(t => {
+    if(!bySubject[t.subject]) bySubject[t.subject] = [];
+    bySubject[t.subject].push(t.pct);
+  });
+
+  // 약점 단원 top 5
+  const weakUnits = [];
+  Object.entries(data.unitStats || {}).forEach(([k, v]) => {
+    if(v.total >= 2){
+      weakUnits.push({key:k, pct: v.correct/v.total, total:v.total});
+    }
+  });
+  weakUnits.sort((a,b) => a.pct - b.pct);
+  const top5Weak = weakUnits.slice(0, 5);
+
+  // 강점 단원 top 5
+  const strongUnits = [...weakUnits].reverse().slice(0, 5);
+
+  const phase = getCurrentPhase();
+
+  let html = `
+<div class="report-body">
+  <h1>주간 학습 리포트 ・ ${name}</h1>
+  <div class="report-meta">
+    발행일: ${ymd} (${wd}) ・ 수능 D-${calcDday()} ・ 현재 ${phase.tag}: ${phase.name}<br/>
+    학생: <strong>${name}</strong> ・ 목표: ${data.goal ? data.goal+'등급' : '미설정'} ・ 연속응시: ${data.streak ? data.streak.current : 0}일 (최고 ${data.streak ? data.streak.best : 0}일)
+  </div>
+
+  <h2>이번 주 요약</h2>
+  <table>
+    <tr><th>지표</th><th>이번 주</th><th>전체 누적</th></tr>
+    <tr><td>응시 횟수</td><td>${totalTests}회</td><td>${data.history.length}회</td></tr>
+    <tr><td>평균 정답률</td><td>${weekAvg}%</td><td>${overallAvg}%</td></tr>
+    <tr><td>최고 점수일</td><td>${totalTests > 0 ? Math.max(...weekTests.map(t=>t.pct))+'%' : '-'}</td><td>${Math.max(...data.history.map(t=>t.pct))}%</td></tr>
+  </table>
+
+  <h2>과목별 응시 현황</h2>
+  <table>
+    <tr><th>과목</th><th>응시 횟수</th><th>평균 정답률</th></tr>
+    ${SUBJECTS.map(s => {
+      const list = bySubject[s] || [];
+      const avg = list.length > 0 ? Math.round(list.reduce((a,b)=>a+b,0)/list.length) : null;
+      return `<tr><td>${s}</td><td>${list.length}회</td><td>${avg !== null ? avg+'%' : '-'}</td></tr>`;
+    }).join('')}
+  </table>
+
+  <h2>약점 단원 (집중 보완 필요)</h2>
+  <table>
+    <tr><th>순위</th><th>과목 / 단원</th><th>정답률</th><th>응시 문제 수</th></tr>
+    ${top5Weak.length > 0 ? top5Weak.map((u,i) => `<tr><td>${i+1}</td><td>${u.key.replace('|', ' / ')}</td><td>${Math.round(u.pct*100)}%</td><td>${u.total}문</td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:#999">데이터 부족</td></tr>'}
+  </table>
+
+  <h2>강점 단원</h2>
+  <table>
+    <tr><th>순위</th><th>과목 / 단원</th><th>정답률</th><th>응시 문제 수</th></tr>
+    ${strongUnits.length > 0 ? strongUnits.map((u,i) => `<tr><td>${i+1}</td><td>${u.key.replace('|', ' / ')}</td><td>${Math.round(u.pct*100)}%</td><td>${u.total}문</td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:#999">데이터 부족</td></tr>'}
+  </table>
+
+  <h2>다음 주 학습 권장 방향</h2>
+  <ol style="padding-left:20px;line-height:1.8;font-size:13px">
+    ${top5Weak.slice(0,3).map(u => `<li><strong>${u.key.split('|')[1]}</strong> 단원 집중 보완 (현재 ${Math.round(u.pct*100)}% → 목표 70%↑)</li>`).join('')}
+    ${data.goal ? `<li>목표 ${data.goal}등급 (정답률 ${gradeToTargetPct(data.goal)}%) — 현재 평균 ${overallAvg}% ・ 차이 ${gradeToTargetPct(data.goal)-overallAvg}%p</li>` : '<li>목표 등급을 설정하면 더 정밀한 조언을 제공합니다</li>'}
+    <li>연속 응시 유지 ・ 매일 1회 이상 응시 ・ 현재 ${data.streak.current}일째</li>
+    <li>${phase.tag} (${phase.name}) 가이드: ${phase.desc}</li>
+  </ol>
+
+  <div style="margin-top:30px;padding-top:14px;border-top:1px solid #ccc;font-size:11px;color:#666;font-family:'JetBrains Mono'">
+    독서실 적응형 쪽지시험 시스템 자동 생성 ・ 본 리포트는 학생의 응시 데이터를 기반으로 산출됩니다
+  </div>
+</div>
+  `;
+
+  document.getElementById('print-zone').innerHTML = html;
+  document.getElementById('print-zone').style.display = 'block';
+
+  // 모달에 리포트 표시 + 인쇄 옵션
+  const body = document.getElementById('modal-body');
+  body.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="margin:0">${name} ・ 주간 리포트</h3>
+      <div>
+        <button class="btn-primary" onclick="window.print()" style="padding:8px 14px;font-family:'JetBrains Mono';font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;border:none">인쇄 / PDF 저장</button>
+      </div>
+    </div>
+    <div style="border:1px solid #ccc;max-height:500px;overflow-y:auto">${html}</div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="document.getElementById('modal-overlay').classList.remove('show');document.getElementById('print-zone').style.display='none'">닫기</button>
+    </div>
+  `;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+window.generateReport = generateReport;
+</script>
+</body>
+</html>
