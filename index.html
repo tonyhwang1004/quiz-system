@@ -1297,9 +1297,12 @@ JSON 형식으로만 응답하세요. 다른 텍스트 절대 금지:
     }
     
     const questions = result.data.questions;
-    if (!Array.isArray(questions) || questions.length < 3) {
-      throw new Error('Invalid question format');
+    console.log('✅ AI 응답 받음:', questions ? questions.length + '개' : 'null');
+    if (!questions || !Array.isArray(questions) || questions.length === 0) {
+      console.error('Empty or invalid questions:', result.data);
+      throw new Error('No questions returned');
     }
+    // 부족한 문제는 그대로 사용 (1개라도 받으면 진행)
     
     questions.forEach(q => {
       if (!q.unit || !subjUnits.includes(q.unit)) q.unit = subjUnits[0];
