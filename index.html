@@ -33,7 +33,6 @@
   .meta .dday{font-family:'Nanum Myeongjo',serif;font-size:32px;font-weight:800;color:var(--ink);letter-spacing:-1px}
   .meta .dday em{font-style:normal;color:var(--accent)}
 
-  /* PHASE BANNER */
   .phase-banner{
     background:linear-gradient(90deg, var(--ink) 0%, var(--accent-2) 100%);
     color:var(--paper);padding:14px 20px;margin-bottom:24px;
@@ -83,7 +82,6 @@
   }
   .streak-badge::before{content:'🔥';margin-right:4px}
 
-  /* GOAL PANEL */
   .goal-panel{
     background:var(--paper-2);border:1px solid var(--rule);
     padding:14px 18px;margin-bottom:20px;
@@ -270,7 +268,6 @@
   .btn-primary{background:var(--ink);color:var(--paper)}
   .btn-secondary{background:transparent;color:var(--ink);border:1px solid var(--ink) !important}
 
-  /* REPORT (인쇄 가능) */
   .report-body{background:#fff;color:#000;padding:30px;font-family:'IBM Plex Sans KR'}
   .report-body h1{font-family:'Nanum Myeongjo',serif;font-size:28px;border-bottom:3px solid #000;padding-bottom:8px;margin-bottom:18px;letter-spacing:-0.5px}
   .report-body h2{font-family:'Nanum Myeongjo',serif;font-size:16px;margin-top:20px;margin-bottom:10px;border-left:4px solid var(--accent);padding-left:10px}
@@ -315,7 +312,6 @@
     </div>
   </header>
 
-  <!-- PHASE BANNER -->
   <div class="phase-banner" id="phase-banner">
     <div>
       <div class="phase-name"><em id="phase-tag">PHASE 1</em><span id="phase-name">기초 다지기</span></div>
@@ -332,7 +328,6 @@
     <button class="mode-tab" data-mode="teacher">선생님 대시보드<small>TEACHER</small></button>
   </div>
 
-  <!-- ============ 학생 모드 ============ -->
   <div id="mode-student">
     <div class="userbar">
       <div class="userbar-left">
@@ -346,7 +341,6 @@
       </div>
     </div>
 
-    <!-- GOAL PANEL -->
     <div class="goal-panel" id="goal-panel" style="display:none">
       <div class="goal-info">
         <div>
@@ -461,7 +455,6 @@
     </div>
   </div>
 
-  <!-- ============ 선생님 모드 ============ -->
   <div id="mode-teacher" class="teacher-stage">
     <div class="section-title">전체 학생 현황 <small>ALL STUDENTS</small></div>
 
@@ -493,7 +486,6 @@
     <div id="teacher-subject-stats"></div>
   </div>
 
-  <!-- 학생 상세 모달 -->
   <div class="modal-overlay" id="modal-overlay">
     <div class="modal" id="modal-content">
       <button class="modal-close" id="modal-close">×</button>
@@ -501,7 +493,6 @@
     </div>
   </div>
 
-  <!-- 인쇄 영역 -->
   <div id="print-zone" style="display:none"></div>
 
   <footer>
@@ -511,12 +502,8 @@
 </div>
 
 <script>
-/* ============================================================
-   상수
-   ============================================================ */
 const SUNEUNG_DATE = new Date(2026, 10, 19);
 
-// 페이즈 정의
 const PHASES = [
   {tag:'PHASE 1', name:'기초 다지기', minDday:101, desc:'개념·어휘 누적 · 광범위 출제 · 중급 위주 점검', recommendBoost:0, focusOnWeak:false},
   {tag:'PHASE 2', name:'6월 모평 직후 ・ 영역 강화', minDday:71, desc:'6월 모평 결과 반영 · 약점 단원 비중 강화 · 상급 도전 시작', recommendBoost:0, focusOnWeak:true},
@@ -542,73 +529,70 @@ const subjectInfo = {
 const FALLBACK_BANK = {
   국어: {
     중: [
-      {type:'mc', q:'다음 중 한글 맞춤법에 맞는 것은?', opts:['웬지','왠지','왼지','윈지'], a:1, ex:'"왠지"는 "왜인지"의 줄임말로 옳은 표기.', unit:'언어(문법)'},
-      {type:'mc', q:'다음 단어의 의미가 가장 적절한 것은?\n\n"각박하다"', opts:['인정이 없고 모질다','매우 단단하다','시간이 빠듯하다','모양이 거칠다'], a:0, ex:'"각박하다"는 인정이 없고 삭막하다.', unit:'어휘'},
-      {type:'mc', q:'정몽주의 「단심가」의 핵심 정서는?', opts:['이별의 슬픔','자연 예찬','충절','자조'], a:2, ex:'고려에 대한 변함없는 충절.', unit:'문학(고전시가)'},
-      {type:'short', q:'한자성어 "塞翁之馬"의 음을 쓰시오.', a:'새옹지마', ex:'길흉화복은 예측할 수 없음.', unit:'어휘'},
-      {type:'mc', q:'다음 중 비유법이 다른 하나는?', opts:['내 마음은 호수요','구름에 달 가듯이','님은 갔습니다','별을 노래하는 마음으로'], a:2, ex:'①②④는 비유.', unit:'문학(현대시)'},
+      {type:'mc', q:'다음 중 한글 맞춤법에 맞는 것은?', opts:['① 웬지','② 왠지','③ 왼지','④ 윈지','⑤ 웬일'], a:1, ex:'"왠지"는 "왜인지"의 줄임말로 옳은 표기.', unit:'언어(문법)'},
+      {type:'mc', q:'다음 단어의 의미가 가장 적절한 것은?\n\n"각박하다"', opts:['① 인정이 없고 모질다','② 매우 단단하다','③ 시간이 빠듯하다','④ 모양이 거칠다','⑤ 형편이 어렵다'], a:0, ex:'"각박하다"는 인정이 없고 삭막하다.', unit:'어휘'},
+      {type:'mc', q:'정몽주의 「단심가」의 핵심 정서는?', opts:['① 이별의 슬픔','② 자연 예찬','③ 충절','④ 자조','⑤ 회한'], a:2, ex:'고려에 대한 변함없는 충절.', unit:'문학(고전시가)'},
+      {type:'mc', q:'한자성어 "塞翁之馬"의 의미는?', opts:['① 친구의 도리','② 길흉화복은 알 수 없음','③ 학문에 정진함','④ 부부의 정','⑤ 효도의 중요성'], a:1, ex:'새옹지마 - 길흉화복은 예측할 수 없음.', unit:'어휘'},
+      {type:'mc', q:'다음 중 비유법이 다른 하나는?', opts:['① 내 마음은 호수요','② 구름에 달 가듯이','③ 님은 갔습니다','④ 별을 노래하는 마음으로','⑤ 꽃잎처럼 떨어진다'], a:2, ex:'①②④⑤는 비유, ③은 직설적 표현.', unit:'문학(현대시)'},
     ],
     상: [
-      {type:'mc', q:'다음 작품의 갈래는?\n\n"동지(冬至)ㅅ달 기나긴 밤을 한 허리를 버혀 내여..."', opts:['평시조','사설시조','연시조','엇시조'], a:0, ex:'황진이의 평시조.', unit:'문학(고전시가)'},
-      {type:'mc', q:'다음 글의 주장으로 가장 적절한 것은?', passage:'사람들은 흔히 자유를 "하고 싶은 것을 마음대로 하는 것"이라 여긴다. 그러나 욕망에 끌려다니는 자는 결코 자유롭지 못하다.', opts:['자유는 모든 욕망 실현','진정한 자유는 자기 절제','방종도 자유의 한 형태','속박은 불가능'], a:1, ex:'자기 통제 능력이 핵심.', unit:'독서(비문학)'},
-      {type:'mc', q:'음운 변동 종류가 다른 것은?', opts:['국물 → [궁물]','맏이 → [마지]','꽃잎 → [꼰닙]','신라 → [실라]'], a:1, ex:'②는 구개음화.', unit:'언어(문법)'},
-      {type:'mc', q:'밑줄친 부분의 기능이 다른 것은?', opts:['그가 떠난 [것이] 분명하다','내가 본 [것은] 사실이다','먹을 [것이] 부족하다','읽을 [것이] 많다'], a:0, ex:'①은 사실의 의존명사.', unit:'언어(문법)'},
-      {type:'short', q:'다음 글의 서술 방식을 쓰시오.\n\n"고래는 어류와 달리 체온을 일정하게 유지하며..."', a:'대조', ex:'두 대상의 차이점.', unit:'독서(비문학)'},
+      {type:'mc', q:'다음 작품의 갈래는?\n\n"동지(冬至)ㅅ달 기나긴 밤을 한 허리를 버혀 내여..."', opts:['① 평시조','② 사설시조','③ 연시조','④ 엇시조','⑤ 가사'], a:0, ex:'황진이의 평시조.', unit:'문학(고전시가)'},
+      {type:'mc', q:'다음 글의 주장으로 가장 적절한 것은?', passage:'사람들은 흔히 자유를 "하고 싶은 것을 마음대로 하는 것"이라 여긴다. 그러나 욕망에 끌려다니는 자는 결코 자유롭지 못하다.', opts:['① 자유는 모든 욕망 실현','② 진정한 자유는 자기 절제','③ 방종도 자유의 한 형태','④ 속박은 불가능','⑤ 자유는 환상이다'], a:1, ex:'자기 통제 능력이 핵심.', unit:'독서(비문학)'},
+      {type:'mc', q:'음운 변동 종류가 다른 것은?', opts:['① 국물 → [궁물]','② 맏이 → [마지]','③ 꽃잎 → [꼰닙]','④ 신라 → [실라]','⑤ 밥물 → [밤물]'], a:1, ex:'②는 구개음화, 나머지는 비음화/유음화.', unit:'언어(문법)'},
+      {type:'mc', q:'밑줄친 부분의 기능이 다른 것은?', opts:['① 그가 떠난 [것이] 분명하다','② 내가 본 [것은] 사실이다','③ 먹을 [것이] 부족하다','④ 읽을 [것이] 많다','⑤ 살 [것을] 골랐다'], a:0, ex:'①은 사실의 의존명사, 나머지는 대상.', unit:'언어(문법)'},
+      {type:'mc', q:'다음 글의 서술 방식은?\n\n"고래는 어류와 달리 체온을 일정하게 유지하며..."', opts:['① 비교','② 대조','③ 분류','④ 정의','⑤ 예시'], a:1, ex:'두 대상의 차이점을 부각.', unit:'독서(비문학)'},
     ]
   },
   수학: {
     중: [
-      {type:'mc', q:'함수 f(x) = x² - 4x + 3 의 최솟값은?', opts:['-1','0','1','3'], a:0, ex:'(x-2)²-1, x=2일 때 -1.', unit:'수학Ⅱ-함수극한'},
-      {type:'mc', q:'등차수열 a₁=3, a₅=19 ・ 공차 d는?', opts:['2','3','4','5'], a:2, ex:'4d=16 → d=4.', unit:'수학Ⅰ-수열'},
-      {type:'short', q:'lim(x→2) (x²-4)/(x-2) = ?', a:'4', ex:'x+2 → 4.', unit:'수학Ⅱ-함수극한'},
-      {type:'mc', q:'sin(π/6) + cos(π/3) = ?', opts:['1/2','1','√2/2','√3/2'], a:1, ex:'1/2+1/2=1.', unit:'수학Ⅰ-삼각함수'},
-      {type:'short', q:'y = x³ - 3x 의 x=1 미분계수는?', a:'0', ex:"y'=3x²-3, x=1 → 0.", unit:'수학Ⅱ-미분'},
+      {type:'mc', q:'함수 f(x) = x² - 4x + 3 의 최솟값은?', opts:['① -1','② 0','③ 1','④ 3','⑤ -3'], a:0, ex:'(x-2)²-1, x=2일 때 -1.', unit:'수학Ⅱ-함수극한'},
+      {type:'mc', q:'등차수열 a₁=3, a₅=19 ・ 공차 d는?', opts:['① 2','② 3','③ 4','④ 5','⑤ 6'], a:2, ex:'4d=16 → d=4.', unit:'수학Ⅰ-수열'},
+      {type:'mc', q:'lim(x→2) (x²-4)/(x-2) = ?', opts:['① 2','② 3','③ 4','④ 5','⑤ 6'], a:2, ex:'(x+2)(x-2)/(x-2) → x+2 → 4.', unit:'수학Ⅱ-함수극한'},
+      {type:'mc', q:'sin(π/6) + cos(π/3) = ?', opts:['① 1/2','② 1','③ √2/2','④ √3/2','⑤ 0'], a:1, ex:'1/2+1/2=1.', unit:'수학Ⅰ-삼각함수'},
+      {type:'mc', q:'y = x³ - 3x 의 x=1 미분계수는?', opts:['① -1','② 0','③ 1','④ 2','⑤ 3'], a:1, ex:"y'=3x²-3, x=1 → 0.", unit:'수학Ⅱ-미분'},
     ],
     상: [
-      {type:'mc', q:'f(x) = x³ - 3x² + 2 의 극댓값과 극솟값의 차는?', opts:['2','4','6','8'], a:1, ex:'극대2, 극소-2.', unit:'수학Ⅱ-미분'},
-      {type:'mc', q:'∫₀¹ (3x² + 2x) dx = ?', opts:['1','2','3','4'], a:1, ex:'[x³+x²]₀¹ = 2.', unit:'수학Ⅱ-적분'},
-      {type:'short', q:'log₂ 12 - log₂ 3 = ?', a:'2', ex:'log₂ 4 = 2.', unit:'수학Ⅰ-지수로그'},
-      {type:'mc', q:'a₁=1, aₙ₊₁=2aₙ+1 ・ a₄ = ?', opts:['7','11','15','31'], a:2, ex:'a₂=3,a₃=7,a₄=15.', unit:'수학Ⅰ-수열'},
-      {type:'short', q:'벡터 a=(1,2), b=(3,k) 수직 ・ k = ?', a:'-3/2', ex:'a·b=0 → 3+2k=0.', unit:'기하'},
+      {type:'mc', q:'f(x) = x³ - 3x² + 2 의 극댓값과 극솟값의 차는?', opts:['① 2','② 4','③ 6','④ 8','⑤ 10'], a:1, ex:'극대 2, 극소 -2, 차 = 4.', unit:'수학Ⅱ-미분'},
+      {type:'mc', q:'∫₀¹ (3x² + 2x) dx = ?', opts:['① 1','② 2','③ 3','④ 4','⑤ 5'], a:1, ex:'[x³+x²]₀¹ = 1+1 = 2.', unit:'수학Ⅱ-적분'},
+      {type:'mc', q:'log₂ 12 - log₂ 3 = ?', opts:['① 1','② 2','③ 3','④ 4','⑤ log₂ 9'], a:1, ex:'log₂(12/3) = log₂ 4 = 2.', unit:'수학Ⅰ-지수로그'},
+      {type:'mc', q:'a_1 = 1, a_{n+1} = 2a_n + 1 일 때, a_4의 값은?', opts:['① 7','② 11','③ 15','④ 31','⑤ 63'], a:2, ex:'a_2=3, a_3=7, a_4=15.', unit:'수학Ⅰ-수열'},
+      {type:'mc', q:'두 벡터 a=(1,2), b=(3,k)가 서로 수직일 때, k의 값은?', opts:['① -3/2','② -1','③ 0','④ 3/2','⑤ 3'], a:0, ex:'a·b=0 → 3+2k=0 → k=-3/2.', unit:'기하'},
     ]
   },
   한국사: {
     중: [
-      {type:'mc', q:'신라 통일과 관련 없는 인물은?', opts:['김유신','문무왕','대조영','김춘추'], a:2, ex:'대조영은 발해.', unit:'남북국'},
-      {type:'mc', q:'고려 광종의 정책은?', opts:['훈요10조','노비안검법','별무반','전민변정도감'], a:1, ex:'노비안검법(956).', unit:'고려'},
-      {type:'mc', q:'세종 대 업적이 아닌 것은?', opts:['훈민정음','측우기','경국대전','집현전'], a:2, ex:'경국대전은 성종.', unit:'조선전기'},
-      {type:'short', q:'1894년 동학농민운동을 이끈 "녹두 장군"은?', a:'전봉준', ex:'전봉준.', unit:'개항기'},
-      {type:'mc', q:'무단 통치(1910~19)에 해당하는 것은?', opts:['치안유지법','조선태형령','국가총동원법','황국신민서사'], a:1, ex:'태형령은 1912년.', unit:'일제강점기'},
+      {type:'mc', q:'신라 통일과 관련 없는 인물은?', opts:['① 김유신','② 문무왕','③ 대조영','④ 김춘추','⑤ 무열왕'], a:2, ex:'대조영은 발해 건국자.', unit:'남북국'},
+      {type:'mc', q:'고려 광종의 정책은?', opts:['① 훈요10조','② 노비안검법','③ 별무반','④ 전민변정도감','⑤ 과전법'], a:1, ex:'노비안검법(956).', unit:'고려'},
+      {type:'mc', q:'세종 대 업적이 아닌 것은?', opts:['① 훈민정음','② 측우기','③ 경국대전','④ 집현전','⑤ 4군 6진'], a:2, ex:'경국대전은 성종 대 완성.', unit:'조선전기'},
+      {type:'mc', q:'1894년 동학농민운동을 이끈 "녹두 장군"은?', opts:['① 김옥균','② 전봉준','③ 손병희','④ 최제우','⑤ 최시형'], a:1, ex:'전봉준이 녹두 장군.', unit:'개항기'},
+      {type:'mc', q:'무단 통치(1910~19)에 해당하는 것은?', opts:['① 치안유지법','② 조선태형령','③ 국가총동원법','④ 황국신민서사','⑤ 창씨개명'], a:1, ex:'태형령은 1912년.', unit:'일제강점기'},
     ],
     상: [
-      {type:'mc', q:'다음 자료가 만들어진 시기는?\n\n"왕은 천명을 받아 ... 균전제를 실시하여..."', opts:['신라 하대','고려 초기','조선 전기','대한제국기'], a:1, ex:'고려 초.', unit:'고려'},
-      {type:'mc', q:'붕당 변천 순서로 옳은 것은?', opts:['동·서→남·북→노·소→일당','동·서→노·소→남·북→일당','남·북→동·서→노·소→일당','노·소→동·서→남·북→일당'], a:0, ex:'1575 동·서 시작.', unit:'조선후기'},
-      {type:'short', q:'1882년 임오년 봉기의 명칭은?', a:'임오군란', ex:'임오군란(1882).', unit:'개항기'},
-      {type:'mc', q:'1920년대 운동 중 성격이 다른 것은?', opts:['물산 장려','민립 대학 설립','광주 학생 항일','6·10 만세'], a:0, ex:'①은 실력 양성.', unit:'일제강점기'},
-      {type:'mc', q:'1948~1953년 사실로 옳지 않은 것은?', opts:['농지 개혁법','반민족 행위 처벌법','한·미 상호 방위 조약','경제 개발 5개년'], a:3, ex:'경제 개발은 1962년.', unit:'현대'},
+      {type:'mc', q:'다음 자료가 만들어진 시기는?\n\n"왕은 천명을 받아 ... 균전제를 실시하여..."', opts:['① 신라 하대','② 고려 초기','③ 조선 전기','④ 대한제국기','⑤ 삼국 시대'], a:1, ex:'고려 초.', unit:'고려'},
+      {type:'mc', q:'붕당 변천 순서로 옳은 것은?', opts:['① 동·서→남·북→노·소→일당','② 동·서→노·소→남·북→일당','③ 남·북→동·서→노·소→일당','④ 노·소→동·서→남·북→일당','⑤ 동·서→남·북→일당→노·소'], a:0, ex:'1575 동·서 시작.', unit:'조선후기'},
+      {type:'mc', q:'1882년 임오년 봉기의 명칭은?', opts:['① 갑신정변','② 임오군란','③ 갑오개혁','④ 동학농민운동','⑤ 을미사변'], a:1, ex:'임오군란(1882).', unit:'개항기'},
+      {type:'mc', q:'1920년대 운동 중 성격이 다른 것은?', opts:['① 물산 장려','② 민립 대학 설립','③ 광주 학생 항일','④ 6·10 만세','⑤ 신간회'], a:0, ex:'①은 실력 양성, 나머지는 항일 운동.', unit:'일제강점기'},
+      {type:'mc', q:'1948~1953년 사실로 옳지 않은 것은?', opts:['① 농지 개혁법','② 반민족 행위 처벌법','③ 한·미 상호 방위 조약','④ 경제 개발 5개년','⑤ 6·25 전쟁'], a:3, ex:'경제 개발은 1962년부터.', unit:'현대'},
     ]
   },
   생활과윤리: {
     중: [
-      {type:'mc', q:'칸트 도덕 행위의 기준은?', opts:['결과','쾌락','정언명령','공동체 이익'], a:2, ex:'칸트 의무론.', unit:'서양윤리'},
-      {type:'mc', q:'공리주의의 원리는?', opts:['최대 다수 최대 행복','만물의 척도','너 자신을 알라','인의예지'], a:0, ex:'벤담·밀.', unit:'서양윤리'},
-      {type:'short', q:'유교의 "남을 사랑하는 마음" 한 글자는?', a:'인', ex:'인(仁).', unit:'동양윤리'},
-      {type:'mc', q:'롤스 정의론의 장치는?', opts:['보이지 않는 손','무지의 베일','범주적 의무','자연 상태'], a:1, ex:'무지의 베일.', unit:'사회윤리'},
-      {type:'mc', q:'동물 도덕 고려 주장 사상가는?', opts:['칸트','싱어','데카르트','홉스'], a:1, ex:'피터 싱어.', unit:'생명윤리'},
+      {type:'mc', q:'칸트 도덕 행위의 기준은?', opts:['① 결과','② 쾌락','③ 정언명령','④ 공동체 이익','⑤ 자연법'], a:2, ex:'칸트 의무론.', unit:'서양윤리'},
+      {type:'mc', q:'공리주의의 원리는?', opts:['① 최대 다수 최대 행복','② 만물의 척도','③ 너 자신을 알라','④ 인의예지','⑤ 무위자연'], a:0, ex:'벤담·밀.', unit:'서양윤리'},
+      {type:'mc', q:'유교의 "남을 사랑하는 마음"을 뜻하는 개념은?', opts:['① 인(仁)','② 예(禮)','③ 의(義)','④ 지(智)','⑤ 신(信)'], a:0, ex:'공자의 인(仁).', unit:'동양윤리'},
+      {type:'mc', q:'롤스 정의론의 장치는?', opts:['① 보이지 않는 손','② 무지의 베일','③ 범주적 의무','④ 자연 상태','⑤ 일반의지'], a:1, ex:'무지의 베일.', unit:'사회윤리'},
+      {type:'mc', q:'동물 도덕 고려 주장 사상가는?', opts:['① 칸트','② 싱어','③ 데카르트','④ 홉스','⑤ 아리스토텔레스'], a:1, ex:'피터 싱어.', unit:'생명윤리'},
     ],
     상: [
-      {type:'mc', q:'다음 사상가가 강조한 것은?\n\n"행위의 옳고 그름은 결과에 의해서만..."', opts:['의무','보편 법칙','최대 행복','자연법'], a:2, ex:'결과주의.', unit:'서양윤리'},
-      {type:'mc', q:'덕 윤리의 특징은?', opts:['결과 중시','행위 자체','품성과 덕','쾌락 총량'], a:2, ex:'행위자 중심.', unit:'서양윤리'},
-      {type:'short', q:'요나스가 강조한, 미래 세대에 대한 의무는?', a:'책임', ex:'책임 원칙.', unit:'평화윤리'},
-      {type:'mc', q:'롤스 "차등의 원칙"은?', opts:['동등한 자유','최소 수혜자에게 최대 이익','각자 그의 몫','다수 행복'], a:1, ex:'차등 원칙.', unit:'사회윤리'},
-      {type:'mc', q:'동양 자연관과 거리가 먼 것은?', opts:['천인합일','자연 정복(베이컨)','만물 불성','상생 조화'], a:1, ex:'베이컨은 서양.', unit:'문화윤리'},
+      {type:'mc', q:'다음 사상가가 강조한 것은?\n\n"행위의 옳고 그름은 결과에 의해서만..."', opts:['① 의무','② 보편 법칙','③ 최대 행복','④ 자연법','⑤ 덕'], a:2, ex:'결과주의·공리주의.', unit:'서양윤리'},
+      {type:'mc', q:'덕 윤리의 특징은?', opts:['① 결과 중시','② 행위 자체','③ 품성과 덕','④ 쾌락 총량','⑤ 의무'], a:2, ex:'행위자 중심.', unit:'서양윤리'},
+      {type:'mc', q:'요나스가 강조한, 미래 세대에 대한 의무는?', opts:['① 자유','② 정의','③ 책임','④ 평등','⑤ 박애'], a:2, ex:'책임 원칙.', unit:'평화윤리'},
+      {type:'mc', q:'롤스 "차등의 원칙"은?', opts:['① 동등한 자유','② 최소 수혜자에게 최대 이익','③ 각자 그의 몫','④ 다수 행복','⑤ 능력에 따른 분배'], a:1, ex:'차등 원칙.', unit:'사회윤리'},
+      {type:'mc', q:'동양 자연관과 거리가 먼 것은?', opts:['① 천인합일','② 자연 정복(베이컨)','③ 만물 불성','④ 상생 조화','⑤ 무위자연'], a:1, ex:'베이컨은 서양 자연관.', unit:'문화윤리'},
     ]
   }
 };
 
-/* ============================================================
-   D-DAY & PHASE
-   ============================================================ */
 function calcDday(){
   const t = new Date(); t.setHours(0,0,0,0);
   return Math.ceil((SUNEUNG_DATE - t) / (1000*60*60*24));
@@ -648,27 +632,19 @@ document.getElementById('today-date').textContent = `${ymd} (${wd})`;
 document.getElementById('footer-time').textContent = `최종 갱신 ${ymd}`;
 renderPhaseBanner();
 
-/* ============================================================
-   상태
-   ============================================================ */
 let currentUser = null;
 let userData = null;
 let selectedSubject = null;
 let selectedLevel = null;
 let currentTest = null;
 let testIsAIGenerated = false;
-let allStudentsCache = null; // 랭킹용
+let allStudentsCache = null;
 
-/* ============================================================
-   저장소 ・ Google Sheets API 연동
-   ============================================================ */
 const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbyTKUGVQ_GJesHNz3r8NUiANMRDH9LDHjr9R4i7HaW5Rm9Ga-bkZlMjFOYkKlGdB6PtUA/exec';
 
-// Apps Script 호출 (POST + text/plain → CORS preflight 회피)
 async function callSheetsAPI(action, params = {}){
   try{
     const body = {action, ...params};
-    // data 같은 객체는 JSON.stringify
     Object.keys(body).forEach(k => {
       if(typeof body[k] === 'object' && body[k] !== null){
         body[k] = JSON.stringify(body[k]);
@@ -738,23 +714,17 @@ async function loadAllStudents(){
   }
 }
 
-/* ============================================================
-   스트릭 계산 (출석)
-   ============================================================ */
 function updateStreak(data){
   const todayStr = new Date().toDateString();
   const lastStr = data.streak.lastDate;
 
   if(lastStr === todayStr){
-    // 오늘 이미 응시 - 변화 없음
     return data.streak;
   }
   const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
   if(lastStr === yesterday.toDateString()){
-    // 어제 응시 - 연속
     data.streak.current++;
   }else{
-    // 그 외 - 리셋
     data.streak.current = 1;
   }
   data.streak.lastDate = todayStr;
@@ -762,9 +732,6 @@ function updateStreak(data){
   return data.streak;
 }
 
-/* ============================================================
-   랭킹 계산
-   ============================================================ */
 async function calculateRank(name){
   const all = allStudentsCache || await loadAllStudents();
   allStudentsCache = all;
@@ -788,19 +755,11 @@ async function calculateRank(name){
   return {rank, total:all.length, percentile:pct, myAvg:Math.round(myAvg)};
 }
 
-/* ============================================================
-   목표 등급 → 권장 정답률 매핑
-   ============================================================ */
 function gradeToTargetPct(grade){
-  // 수능 등급 비율 기준 누적 백분율로 환산
-  // 1등급=상위4%, 2=11%, 3=23%, 4=40%, 5=60%, 6=77%, 7=89%, 8=96%
   const map = {1:90, 2:80, 3:70, 4:60, 5:50, 6:40, 7:30, 8:20, 9:15};
   return map[grade] || 60;
 }
 
-/* ============================================================
-   모드 전환
-   ============================================================ */
 document.querySelectorAll('.mode-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
@@ -817,9 +776,6 @@ document.querySelectorAll('.mode-tab').forEach(tab => {
   });
 });
 
-/* ============================================================
-   로그인
-   ============================================================ */
 document.getElementById('login-btn').addEventListener('click', login);
 document.getElementById('username-input').addEventListener('keypress', e => {
   if(e.key === 'Enter') login();
@@ -840,7 +796,6 @@ async function login(){
   document.getElementById('logout-btn').style.display = '';
   document.getElementById('goal-panel').style.display = 'flex';
 
-  // 스트릭 표시
   if(userData.streak.current > 0){
     const sb = document.getElementById('streak-display');
     sb.style.display = '';
@@ -871,9 +826,6 @@ function logout(){
   updateStartBtn();
 }
 
-/* ============================================================
-   목표 패널
-   ============================================================ */
 function renderGoalPanel(){
   const display = document.getElementById('goal-display');
   if(userData.goal){
@@ -934,9 +886,6 @@ async function updateRankDisplay(){
   el.innerHTML = `상위 <strong>${r.percentile}%</strong> (${r.rank}/${r.total}명)${goalMsg}`;
 }
 
-/* ============================================================
-   대시보드
-   ============================================================ */
 function renderDashboard(){
   const dash = document.getElementById('dashboard');
   dash.classList.add('show');
@@ -986,7 +935,6 @@ function renderDashboard(){
   }
   document.getElementById('avg-trend').textContent = `누적 ${h.length}회`;
 
-  // 추세 그래프
   const chart = document.getElementById('trend-chart');
   chart.innerHTML = '';
   const last10 = h.slice(-10);
@@ -1055,9 +1003,6 @@ function getHeatColor(pct){
   return 'rgba(192,57,43,0.3)';
 }
 
-/* ============================================================
-   추천 (페이즈 + 목표 반영)
-   ============================================================ */
 function recommendLevel(subject){
   const phase = getCurrentPhase();
   const goalPct = userData && userData.goal ? gradeToTargetPct(userData.goal) : 60;
@@ -1077,12 +1022,10 @@ function recommendLevel(subject){
   const avg = recent.reduce((s,x)=>s+x.pct,0)/recent.length;
 
   let level, reason;
-  // 페이즈 4(마무리)는 약점 위주 → 무조건 중급으로 안정
   if(phase.finalMode){
     level = avg >= 75 ? '상' : '중';
     reason = `마무리 단계 - 누적 오답·약점 단원 집중`;
   }else{
-    // 페이즈 3 부스트 적용
     const threshold = phase.recommendBoost === 1 ? 70 : 80;
     if(avg >= threshold){
       level = '상';
@@ -1099,7 +1042,6 @@ function recommendLevel(subject){
       reason = `최근 ${Math.round(avg)}% - 기본 다지기`;
     }
 
-    // 목표 등급 반영: 목표보다 이미 높으면 도전, 한참 낮으면 안정
     if(userData.goal){
       const diff = avg - goalPct;
       if(diff >= 10 && level === '중') {
@@ -1112,7 +1054,6 @@ function recommendLevel(subject){
     }
   }
 
-  // 약점 과목
   const subjectAvg = {};
   SUBJECTS.forEach(s => {
     const sh = h.filter(x => x.subject === s);
@@ -1121,7 +1062,6 @@ function recommendLevel(subject){
   let weakest = null, minAvg = Infinity;
   Object.entries(subjectAvg).forEach(([s,v]) => { if(v < minAvg){ minAvg = v; weakest = s; } });
 
-  // 약점 단원
   let weakUnits = [];
   if(subject && userData.unitStats){
     const subjUnits = UNITS[subject];
@@ -1224,7 +1164,7 @@ function updateStartBtn(){
 }
 
 /* ============================================================
-   AI 문제 생성 (페이즈·목표·약점 반영)
+   AI 문제 생성 (Apps Script 경유)
    ============================================================ */
 async function generateAIQuestions(subject, level){
   const phase = getCurrentPhase();
@@ -1240,7 +1180,6 @@ async function generateAIQuestions(subject, level){
     .map(q => q.q.substring(0, 40))
     .slice(-30);
 
-  // 누적 오답 (마무리 모드용)
   const wrongQuestions = userData.history
     .flatMap(h => (h.questions || []).filter(q => !q.correct))
     .slice(-15);
@@ -1328,34 +1267,52 @@ JSON 형식으로만 응답하세요. 다른 텍스트 절대 금지:
 - 모든 type은 "mc"로 통일
 - opts 배열 길이: 정확히 5
 - a 값: 0~4 (정답이 ①이면 0, ⑤면 4)`;
-  try{
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 3000,
-        messages: [{role:"user", content:prompt}]
-      })
+
+  try {
+    // Apps Script를 통해 Claude API 호출 (CORS 우회 + API 키 보호)
+    const formData = new URLSearchParams({
+      action: 'generateQuestions',
+      prompt: prompt
     });
-    const data = await response.json();
-    const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
-    const cleaned = text.replace(/```json|```/g, '').trim();
-    const questions = JSON.parse(cleaned);
-    if(!Array.isArray(questions) || questions.length < 3) throw new Error('Invalid');
+    
+    const response = await fetch(SHEETS_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+      body: formData.toString(),
+      redirect: 'follow'
+    });
+    
+    const responseText = await response.text();
+    let result;
+    try {
+      result = JSON.parse(responseText);
+    } catch (e) {
+      console.error('Non-JSON response:', responseText.substring(0, 300));
+      throw new Error('Apps Script가 JSON을 반환하지 않았습니다');
+    }
+    
+    if (!result.ok) {
+      console.error('AI generation failed:', result.error);
+      throw new Error(result.error || 'AI 호출 실패');
+    }
+    
+    const questions = result.data.questions;
+    if (!Array.isArray(questions) || questions.length < 3) {
+      throw new Error('Invalid question format');
+    }
+    
     questions.forEach(q => {
-      if(!q.unit || !subjUnits.includes(q.unit)) q.unit = subjUnits[0];
+      if (!q.unit || !subjUnits.includes(q.unit)) q.unit = subjUnits[0];
     });
+    
     return questions.slice(0, 5);
-  }catch(e){
+    
+  } catch(e) {
     console.error('AI generation failed:', e);
     return null;
   }
 }
 
-/* ============================================================
-   시험
-   ============================================================ */
 document.getElementById('start-btn').addEventListener('click', startTest);
 document.getElementById('restart-btn').addEventListener('click', restart);
 document.getElementById('submit-btn').addEventListener('click', submitTest);
@@ -1370,14 +1327,15 @@ async function startTest(){
     '약점 단원과 페이즈에 맞춰 새 문제 생성 중…';
 
   testIsAIGenerated = false;
-  if(userData.history.length >= 1){
-    document.getElementById('loading').classList.add('show');
-    const aiQs = await generateAIQuestions(selectedSubject, selectedLevel);
-    document.getElementById('loading').classList.remove('show');
-    if(aiQs && aiQs.length >= 3){
-      currentTest = aiQs;
-      testIsAIGenerated = true;
-    }
+  currentTest = null;
+
+  // 항상 AI 출제 시도 (첫 응시부터)
+  document.getElementById('loading').classList.add('show');
+  const aiQs = await generateAIQuestions(selectedSubject, selectedLevel);
+  document.getElementById('loading').classList.remove('show');
+  if(aiQs && aiQs.length >= 3){
+    currentTest = aiQs;
+    testIsAIGenerated = true;
   }
 
   if(!currentTest){
@@ -1499,7 +1457,6 @@ async function submitTest(){
   else msg = '"오답을 노트 정리. 내일 같은 범위 재시험."';
   document.getElementById('score-msg').textContent = msg;
 
-  // 단원별 결과
   const summaryEl = document.getElementById('unit-summary');
   const unitParts = Object.entries(unitDelta).map(([k,v]) => {
     const unit = k.split('|')[1];
@@ -1513,14 +1470,12 @@ async function submitTest(){
 
   const prevRec = userData.history.length > 0 ? recommendLevel() : null;
 
-  // 누적
   Object.entries(unitDelta).forEach(([k, v]) => {
     if(!userData.unitStats[k]) userData.unitStats[k] = {correct:0, total:0};
     userData.unitStats[k].correct += v.correct;
     userData.unitStats[k].total += v.total;
   });
 
-  // 스트릭 업데이트
   updateStreak(userData);
 
   userData.history.push({
@@ -1536,9 +1491,8 @@ async function submitTest(){
     phase: getCurrentPhase().tag
   });
   await saveUserData(currentUser, userData);
-  allStudentsCache = null; // 캐시 무효화
+  allStudentsCache = null;
 
-  // 스트릭 표시 갱신
   if(userData.streak.current > 0){
     const sb = document.getElementById('streak-display');
     sb.style.display = '';
@@ -1557,7 +1511,6 @@ async function submitTest(){
     lvChangeEl.innerHTML = `<div class="level-change same">─ 다음 추천: ${newRec.level}급 ・ ${newRec.reason}</div>`;
   }
 
-  // 랭킹 메시지
   const r = await calculateRank(currentUser);
   if(r){
     let goalAchieved = '';
@@ -1570,7 +1523,6 @@ async function submitTest(){
     document.getElementById('rank-msg-result').innerHTML = `<div class="rank-message">★ 독서실 내 상위 ${r.percentile}% (${r.rank}/${r.total}명)${goalAchieved}</div>`;
   }
 
-  // 스트릭 축하
   if(userData.streak.current > 0 && userData.streak.current % 7 === 0){
     document.getElementById('rank-msg-result').innerHTML += `<div class="rank-message" style="color:var(--gold)">🔥 ${userData.streak.current}일 연속 응시 ・ 꾸준함이 가장 큰 무기</div>`;
   }
@@ -1596,9 +1548,6 @@ async function restart(){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-/* ============================================================
-   선생님 대시보드
-   ============================================================ */
 async function renderTeacherDashboard(){
   const all = await loadAllStudents();
   const tbody = document.getElementById('student-tbody');
@@ -1744,9 +1693,6 @@ function renderSubjectStats(allData){
   }
 }
 
-/* ============================================================
-   학생 상세 모달
-   ============================================================ */
 function showStudentDetail(name, data){
   const overlay = document.getElementById('modal-overlay');
   const body = document.getElementById('modal-body');
@@ -1816,9 +1762,6 @@ document.getElementById('modal-overlay').addEventListener('click', (e) => {
   }
 });
 
-/* ============================================================
-   주간 리포트 (HTML 인쇄)
-   ============================================================ */
 async function generateReport(name){
   const data = await loadUserData(name);
   if(!data.history || data.history.length === 0){
@@ -1832,14 +1775,12 @@ async function generateReport(name){
   const weekAvg = totalTests > 0 ? Math.round(weekTests.reduce((s,x)=>s+x.pct,0)/totalTests) : 0;
   const overallAvg = Math.round(data.history.reduce((s,x)=>s+x.pct,0)/data.history.length);
 
-  // 과목별 주간 통계
   const bySubject = {};
   weekTests.forEach(t => {
     if(!bySubject[t.subject]) bySubject[t.subject] = [];
     bySubject[t.subject].push(t.pct);
   });
 
-  // 약점 단원 top 5
   const weakUnits = [];
   Object.entries(data.unitStats || {}).forEach(([k, v]) => {
     if(v.total >= 2){
@@ -1849,7 +1790,6 @@ async function generateReport(name){
   weakUnits.sort((a,b) => a.pct - b.pct);
   const top5Weak = weakUnits.slice(0, 5);
 
-  // 강점 단원 top 5
   const strongUnits = [...weakUnits].reverse().slice(0, 5);
 
   const phase = getCurrentPhase();
@@ -1909,7 +1849,6 @@ async function generateReport(name){
   document.getElementById('print-zone').innerHTML = html;
   document.getElementById('print-zone').style.display = 'block';
 
-  // 모달에 리포트 표시 + 인쇄 옵션
   const body = document.getElementById('modal-body');
   body.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
