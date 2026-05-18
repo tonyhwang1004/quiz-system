@@ -1306,8 +1306,12 @@ JSON 형식으로만 응답하세요. 다른 텍스트 절대 금지:
     
     questions.forEach(q => {
       if (!q.unit || !subjUnits.includes(q.unit)) q.unit = subjUnits[0];
+      if (!q.type) q.type = 'mc';
+      if (!q.opts) q.opts = ['①', '②', '③', '④', '⑤'];
+      if (q.a === undefined) q.a = 0;
+      if (!q.ex) q.ex = '';
+      if (!q.passage) q.passage = '';
     });
-    
     return questions.slice(0, 5);
     
   } catch(e) {
